@@ -1,6 +1,9 @@
 package com.patrikdufresne.ilp;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +22,7 @@ public class VariableTest {
 
 	@Before
 	public void createEmptyLP() {
-		ISolverFactory solverFactory = GLPKSolverFactory.instance();
+		SolverFactory solverFactory = GLPKSolverFactory.instance();
 		solver = solverFactory.createSolver();
 		lp = solver.createLinearProblem();
 	}
@@ -95,10 +98,12 @@ public class VariableTest {
 		Constraint constraint2 = lp.addConstraint("2x + 3y <= 12", new int[] {
 				2, 3 }, new Variable[] { x, y }, null, 12);
 
-		((IBranchingTechniqueLast) solver).setBranchingLast(true);
+		SolverOption option = solver.createSolverOption();
+		
+		((IBranchingTechniqueLast) option).setBranchingLast(true);
 
 		// Solve the model
-		assertTrue(solver.solve(lp));
+		assertTrue(solver.solve(lp, option));
 		assertFalse(lp.isPrimalFeasible());
 		assertEquals(Status.OPTIMAL, lp.getStatus());
 		assertEquals(2, y.getValue().intValue());
@@ -138,8 +143,6 @@ public class VariableTest {
 		Constraint constraint2 = lp.addConstraint("2x + 3y <= 12", new int[] {
 				2, 3 }, new Variable[] { x, y }, null, 12);
 
-		((IBranchingTechniqueLast) solver).setBranchingLast(true);
-
 		y.getValue();
 
 	}
@@ -164,7 +167,7 @@ public class VariableTest {
 		Constraint constraint = lp.addConstraint("x=0.5", linear, 0.5, 0.5);
 
 		// solve the problem
-		assertFalse(solver.solve(lp));
+		assertFalse(solver.solve(lp, solver.createSolverOption()));
 		assertEquals(Status.UNKNOWN, lp.getStatus());
 		assertFalse(lp.isPrimalFeasible());
 

@@ -11,7 +11,7 @@ package com.patrikdufresne.ilp;
  * @author Patrik Dufresne
  * 
  */
-public interface IBranchingTechniqueLast extends IBranchingTechnique {
+public interface IBranchingTechniqueLast extends SolverOption {
 
 	/**
 	 * Enable or disable this branching technique.

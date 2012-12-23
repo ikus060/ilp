@@ -4,7 +4,7 @@
  */
 package com.patrikdufresne.ilp.impl;
 
-import com.patrikdufresne.ilp.ISolverFactory;
+import com.patrikdufresne.ilp.SolverFactory;
 import com.patrikdufresne.ilp.Solver;
 
 /**
@@ -13,7 +13,7 @@ import com.patrikdufresne.ilp.Solver;
  * @author Patrik Dufresne
  * 
  */
-public class GLPKSolverFactory implements ISolverFactory {
+public class GLPKSolverFactory implements SolverFactory {
 
 	private static GLPKSolverFactory instance;
 

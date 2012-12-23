@@ -15,15 +15,13 @@ import org.gnu.glpk.GlpkTerminal;
 import org.gnu.glpk.GlpkTerminalListener;
 import org.gnu.glpk.glp_iocp;
 import org.gnu.glpk.glp_smcp;
-import org.gnu.glpk.glp_tree;
 
-import com.patrikdufresne.ilp.IBranchingTechniqueLast;
-import com.patrikdufresne.ilp.IBranchingTechniqueLastAlwaysDown;
-import com.patrikdufresne.ilp.IFeasibilityPumpHeuristic;
 import com.patrikdufresne.ilp.ILPException;
 import com.patrikdufresne.ilp.ILPLogger;
-import com.patrikdufresne.ilp.LinearProblem;
 import com.patrikdufresne.ilp.ILPPolicy;
+import com.patrikdufresne.ilp.LinearProblem;
+import com.patrikdufresne.ilp.Solver;
+import com.patrikdufresne.ilp.SolverOption;
 import com.patrikdufresne.ilp.Status;
 
 /**
@@ -32,34 +30,7 @@ import com.patrikdufresne.ilp.Status;
  * @author Patrik Dufresne
  * 
  */
-public class GLPKSolver implements IFeasibilityPumpHeuristic,
-		IBranchingTechniqueLast, IBranchingTechniqueLastAlwaysDown {
-	/**
-	 * Constant value for branching last.
-	 */
-	private static final String BRANCHING_LAST = "last"; //$NON-NLS-1$
-
-	/**
-	 * Callback function implementing last always down branching technique.
-	 */
-	private static final GlpkCallbackListener BRANCHING_LAST_ALWAYS_DOWN = new GlpkCallbackListener() {
-		@Override
-		public void callback(glp_tree tree) {
-			int reason = GLPK.glp_ios_reason(tree);
-			if (reason == GLPKConstants.GLP_IBRANCH) {
-				int n = GLPK.glp_get_num_cols(GLPK.glp_ios_get_prob(tree));
-				int j;
-				for (j = n; j >= 1; j--) {
-					if (GLPK.glp_ios_can_branch(tree, j) != 0)
-						break;
-				}
-				if (j < 1) {
-					return;
-				}
-				GLPK.glp_ios_branch_upon(tree, j, GLPKConstants.GLP_DN_BRNCH);
-			}
-		}
-	};
+public class GLPKSolver implements Solver {
 
 	/**
 	 * Private listener to send message trough Policy logger.
@@ -98,25 +69,6 @@ public class GLPKSolver implements IFeasibilityPumpHeuristic,
 		GlpkTerminal.addListener(terminalListener);
 
 	}
-
-	/**
-	 * Used to convert the internal constant value to the GLPK constant value
-	 * 
-	 * @param technique
-	 *            the technique or null if not set
-	 * @return one of the GLP_BR_* constant
-	 */
-	static int brTech(Object technique) {
-		if (BRANCHING_LAST.equals(technique)) {
-			return GLPKConstants.GLP_BR_LFV;
-		}
-		return GLPKConstants.GLP_BR_DTH;
-	}
-
-	/**
-	 * Private listener to redirect the callback to an heuristic.
-	 */
-	// private GlpkCallbackListener callbackListener;
 
 	/**
 	 * Check the return code of glp_simplex() and glp_exact().
@@ -180,17 +132,6 @@ public class GLPKSolver implements IFeasibilityPumpHeuristic,
 	}
 
 	/**
-	 * Define the branching technique used by this solver. May be constant value
-	 * or a custom heuristic.
-	 */
-	private Object brTech;
-
-	/**
-	 * True to enabled Feasibility pump heuristic.
-	 */
-	private boolean fpump;
-
-	/**
 	 * Default constructor.
 	 */
 	public GLPKSolver() {
@@ -205,48 +146,18 @@ public class GLPKSolver implements IFeasibilityPumpHeuristic,
 		return new GLPKLinearProblem();
 	}
 
+	/**
+	 * Create a new GLPK solver option.
+	 * 
+	 * @return
+	 */
+	public SolverOption createSolverOption() {
+		return new GLPKSolverOption();
+	}
+
 	@Override
 	public void dispose() {
 		// Nothing to dispose.
-	}
-
-	/**
-	 * This implementation check if the constant value matchs the technique.
-	 */
-	@Override
-	public boolean getBranchingLast() {
-		return BRANCHING_LAST.equals(this.brTech);
-	}
-
-	@Override
-	public boolean getBranchingLastAlwaysDown() {
-		return this.brTech == BRANCHING_LAST_ALWAYS_DOWN;
-	}
-
-	@Override
-	public boolean getFeasibilityPumpHeuristic() {
-		return this.fpump;
-	}
-
-	/**
-	 * This implementation sets the interval variable to a constant value.
-	 */
-	@Override
-	public void setBranchingLast(boolean enabled) {
-		this.brTech = enabled ? BRANCHING_LAST : null;
-	}
-
-	@Override
-	public void setBranchingLastAlwaysDown(boolean enabled) {
-		this.brTech = enabled ? BRANCHING_LAST_ALWAYS_DOWN : null;
-	}
-
-	/**
-	 * This implementation enable the feasibility pump.
-	 */
-	@Override
-	public void setFeasibilityPumpHeuristic(boolean enabled) {
-		this.fpump = enabled;
 	}
 
 	/**
@@ -257,7 +168,17 @@ public class GLPKSolver implements IFeasibilityPumpHeuristic,
 	 * of glp_simplex() to solve the problem.
 	 */
 	@Override
-	public boolean solve(LinearProblem lp) {
+	public boolean solve(LinearProblem lp, SolverOption option) {
+		if (!(lp instanceof GLPKLinearProblem)) {
+			throw new IllegalArgumentException(
+					"lp should be a GLPKLinearProblem");
+		}
+		if (!(option instanceof GLPKSolverOption)) {
+			throw new IllegalArgumentException(
+					"option should be a GLPKSolverOption");
+		}
+		GLPKLinearProblem glpklp = (GLPKLinearProblem) lp;
+		GLPKSolverOption glpkopt = (GLPKSolverOption) option;
 
 		// Since GLPK is not thread safe, make sure only one thread is accessing
 		// the solver.
@@ -269,9 +190,9 @@ public class GLPKSolver implements IFeasibilityPumpHeuristic,
 			}
 
 			// Make the problem as clear if a solution was found
-			((GLPKLinearProblem) lp).primalFeasible = null;
-			((GLPKLinearProblem) lp).dualFeasible = null;
-			((GLPKLinearProblem) lp).status = null;
+			glpklp.primalFeasible = null;
+			glpklp.dualFeasible = null;
+			glpklp.status = null;
 
 			// True if a feasible solution is found (not necessarily optimal)
 			boolean found = false;
@@ -280,30 +201,34 @@ public class GLPKSolver implements IFeasibilityPumpHeuristic,
 			attachTerminalListener();
 
 			int returns;
-			if (lp.isMIP()) {
+			if (glpkopt.intfeasible) {
+				
+				// Run the solver
+				returns = GLPK.glp_intfeas1(glpklp.lp, 0, 0);
+
+			} else if (glpklp.isMIP()) {
 
 				glp_iocp iocp = new glp_iocp();
 				GLPK.glp_init_iocp(iocp);
 				iocp.setPresolve(GLPKConstants.GLP_ON);
 
 				// Set the branching technique
-				if (this.brTech != null) {
-					iocp.setBr_tech(brTech(this.brTech));
+				if (glpkopt.brTech != null) {
+					iocp.setBr_tech(GLPKSolverOption.brTech(glpkopt.brTech));
 				}
 
 				try {
 					// Attach listener if a custom heuristic is provided
-					if (this.brTech instanceof GlpkCallbackListener) {
-						addCallbackListener((GlpkCallbackListener) this.brTech);
+					if (glpkopt.brTech instanceof GlpkCallbackListener) {
+						addCallbackListener((GlpkCallbackListener) glpkopt.brTech);
 					}
 
 					// Enable/disable feasibility pump heuristic according to
 					// fpump value
-					iocp.setFp_heur(this.fpump ? GLPKConstants.GLP_ON
+					iocp.setFp_heur(glpkopt.fpump ? GLPKConstants.GLP_ON
 							: GLPKConstants.GLP_OFF);
 
-					returns = GLPK
-							.glp_intopt(((GLPKLinearProblem) lp).lp, iocp);
+					returns = GLPK.glp_intopt(glpklp.lp, iocp);
 
 					if (returns != GLPKConstants.GLP_ENOPFS) {
 						// Generate exception according to return code
@@ -320,19 +245,19 @@ public class GLPKSolver implements IFeasibilityPumpHeuristic,
 				GLPK.glp_init_smcp(parm);
 
 				// Run the simplex algorithm
-				returns = GLPK.glp_simplex(((GLPKLinearProblem) lp).lp, parm);
+				returns = GLPK.glp_simplex(glpklp.lp, parm);
 
 				// Generate exception according to return code
 				checkSolverReturnCode(returns);
 
 			}
 
-			Status status = ((GLPKLinearProblem) lp).getStatus();
+			Status status = glpklp.getStatus();
 			found = status.equals(Status.FEASIBLE)
 					|| status.equals(Status.OPTIMAL);
 
 			if (found) {
-				((GLPKLinearProblem) lp).clear();
+				glpklp.clear();
 			}
 
 			return found;

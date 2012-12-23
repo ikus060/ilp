@@ -10,7 +10,7 @@ package com.patrikdufresne.ilp;
  * @author Patrik Dufresne
  * 
  */
-public interface ISolverFactory {
+public interface SolverFactory {
 
 	/**
 	 * Create a new solver object.

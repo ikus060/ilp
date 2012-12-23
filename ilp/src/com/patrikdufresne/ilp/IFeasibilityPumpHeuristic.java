@@ -5,13 +5,13 @@
 package com.patrikdufresne.ilp;
 
 /**
- * Solver implementing this interface are suppurting the feasability pump
+ * Solvers implementing this interface are supporting the feasibility pump
  * heuristic.
  * 
  * @author Patrik Dufresne
  * 
  */
-public interface IFeasibilityPumpHeuristic extends Solver {
+public interface IFeasibilityPumpHeuristic extends SolverOption {
 
 	/**
 	 * Enabled or disable the feasibility pump heuristic of this solver.

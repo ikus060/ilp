@@ -11,7 +11,7 @@ package com.patrikdufresne.ilp;
  * @author Patrik Dufresne
  * 
  */
-public interface IBranchingTechniqueLastAlwaysDown extends IBranchingTechnique {
+public interface IBranchingTechniqueLastAlwaysDown extends SolverOption {
 
 	/**
 	 * Enable or disable this branching technique.

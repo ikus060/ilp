@@ -27,7 +27,7 @@ public class LinearProblemTest {
 
 	@Before
 	public void createEmptyLP() {
-		ISolverFactory solverFactory = GLPKSolverFactory.instance();
+		SolverFactory solverFactory = GLPKSolverFactory.instance();
 		solver = solverFactory.createSolver();
 		lp = solver.createLinearProblem();
 	}

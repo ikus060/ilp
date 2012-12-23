@@ -11,13 +11,20 @@ package com.patrikdufresne.ilp;
  * 
  */
 public interface Solver {
-	
+
 	/**
 	 * Create a new linear problem.
 	 * 
 	 * @return the linear problem.
 	 */
 	LinearProblem createLinearProblem();
+
+	/**
+	 * Create a new solver option with default parameters.
+	 * 
+	 * @return
+	 */
+	SolverOption createSolverOption();
 
 	/**
 	 * This function should be called to free any resources allocated by the
@@ -29,13 +36,15 @@ public interface Solver {
 	 * Solve the linear problem.
 	 * 
 	 * @param lp
-	 *            the linear problem
+	 *            the linear problem.
+	 * @param option
+	 *            the solver option.
 	 * @return A Boolean value reporting whether a feasible solution has been
 	 *         found. This solution is not necessarily optimal. If
 	 *         <code>false</code> is returned, a feasible solution may still be
 	 *         present, but the solver has not been able to prove its
 	 *         feasibility.
 	 */
-	boolean solve(LinearProblem lp);
-	
+	boolean solve(LinearProblem lp, SolverOption option);
+
 }
