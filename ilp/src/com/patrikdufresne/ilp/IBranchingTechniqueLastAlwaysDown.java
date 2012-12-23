@@ -5,6 +5,9 @@
 package com.patrikdufresne.ilp;
 
 /**
+ * This interface force the solver to use a specific algorithm to select the
+ * next node and it's direction within the branch-and-bound algorithm.
+ * <p>
  * This branching technique will select the last fractional variables and round
  * it down.
  * 

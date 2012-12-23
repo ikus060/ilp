@@ -7,7 +7,7 @@ import org.gnu.glpk.glp_tree;
 
 import com.patrikdufresne.ilp.IBranchingTechniqueLast;
 import com.patrikdufresne.ilp.IBranchingTechniqueLastAlwaysDown;
-import com.patrikdufresne.ilp.IIntegerFeasibilityCheck;
+import com.patrikdufresne.ilp.ICheckIntegerFeasibility;
 import com.patrikdufresne.ilp.IFeasibilityPumpHeuristic;
 import com.patrikdufresne.ilp.SolverOption;
 
@@ -19,7 +19,7 @@ import com.patrikdufresne.ilp.SolverOption;
  */
 public class GLPKSolverOption implements IFeasibilityPumpHeuristic,
 		IBranchingTechniqueLast, IBranchingTechniqueLastAlwaysDown,
-		IIntegerFeasibilityCheck {
+		ICheckIntegerFeasibility {
 
 	/**
 	 * Constant value for branching last.
@@ -92,7 +92,7 @@ public class GLPKSolverOption implements IFeasibilityPumpHeuristic,
 	}
 
 	@Override
-	public boolean getIntegerFeasibilityCheck() {
+	public boolean getCheckIntegerFeasibility() {
 		return this.intfeasible;
 	}
 
@@ -115,7 +115,7 @@ public class GLPKSolverOption implements IFeasibilityPumpHeuristic,
 	}
 
 	@Override
-	public void setIntegerFeasibilitCheck(boolean enabled) {
+	public void setCheckIntegerFeasibility(boolean enabled) {
 		this.intfeasible = enabled;
 	}
 

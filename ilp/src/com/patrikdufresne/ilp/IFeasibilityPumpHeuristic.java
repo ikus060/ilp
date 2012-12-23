@@ -5,8 +5,11 @@
 package com.patrikdufresne.ilp;
 
 /**
- * Solvers implementing this interface are supporting the feasibility pump
+ * This interface force the solver to use the feasibility pump
  * heuristic.
+ * <p>
+ * The feasibility pump is a heuristic that finds an initial feasible solution
+ * even in certain very hard mixed integer programming problems (MIPs).
  * 
  * @author Patrik Dufresne
  * 
@@ -14,7 +17,7 @@ package com.patrikdufresne.ilp;
 public interface IFeasibilityPumpHeuristic extends SolverOption {
 
 	/**
-	 * Enabled or disable the feasibility pump heuristic of this solver.
+	 * Enabled or disable the feasibility pump heuristic.
 	 * 
 	 * @param enabled
 	 *            True to enabled the heuristic

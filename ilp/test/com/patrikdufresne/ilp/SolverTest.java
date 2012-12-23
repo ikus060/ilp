@@ -47,7 +47,7 @@ public class SolverTest {
 		
 		
 		SolverOption option =  solver.createSolverOption();
-		((IIntegerFeasibilityCheck)option).setIntegerFeasibilitCheck(true);
+		((ICheckIntegerFeasibility)option).setCheckIntegerFeasibility(true);
 		
 		assertTrue(solver.solve(lp, option));
 
@@ -89,7 +89,7 @@ public class SolverTest {
 		
 		
 		SolverOption option =  solver.createSolverOption();
-		((IIntegerFeasibilityCheck)option).setIntegerFeasibilitCheck(true);
+		((ICheckIntegerFeasibility)option).setCheckIntegerFeasibility(true);
 		
 		assertFalse(solver.solve(lp, option));
 
