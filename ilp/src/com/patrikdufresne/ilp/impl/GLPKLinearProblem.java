@@ -550,7 +550,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements
 			throw new NullPointerException();
 		}
 
-		if (GLPK.glp_write_prob(this.lp, 0, file.getAbsolutePath()) != 0) {
+		if (GLPK.glp_write_lp(this.lp, null, file.getAbsolutePath()) != 0) {
 			// TODO retrieved the error message
 			throw new IOException("Error writing the problem to file."); //$NON-NLS-1$
 		}
