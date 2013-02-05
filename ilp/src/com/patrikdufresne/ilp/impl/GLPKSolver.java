@@ -61,7 +61,7 @@ public class GLPKSolver implements Solver {
 				if (message.endsWith("\n")) { //$NON-NLS-1$
 					message = message.substring(0, str.length() - 1);
 				}
-				ILPPolicy.log(ILPLogger.DEBUG, message);
+				ILPPolicy.log(ILPLogger.ERROR, message);
 				return false;
 			}
 		};
@@ -212,6 +212,7 @@ public class GLPKSolver implements Solver {
 				glp_iocp iocp = new glp_iocp();
 				GLPK.glp_init_iocp(iocp);
 				iocp.setPresolve(GLPKConstants.GLP_ON);
+				iocp.setMsg_lev(GLPKConstants.GLP_MSG_ERR);
 
 				// Set the branching technique
 				if (glpkopt.brTech != null) {
