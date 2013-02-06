@@ -533,9 +533,22 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements
 		GLPK.glp_set_obj_name(this.lp, name);
 	}
 
+	/**
+	 * This implementations read the file as CPLEX format using glp_read_lp() function.
+	 */
 	@Override
 	public void load(File file) throws IOException {
-		throw new UnsupportedOperationException();
+		checkProblem();
+
+		if (file == null) {
+			throw new NullPointerException();
+		}
+
+		if (GLPK.glp_read_lp(this.lp, null, file.getAbsolutePath()) != 0) {
+			// TODO retrieved the error message
+			throw new IOException("Error reading the problem from file."); //$NON-NLS-1$
+		}
+
 	}
 
 	/**

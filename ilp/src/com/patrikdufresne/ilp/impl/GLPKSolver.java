@@ -14,6 +14,7 @@ import org.gnu.glpk.GlpkCallbackListener;
 import org.gnu.glpk.GlpkTerminal;
 import org.gnu.glpk.GlpkTerminalListener;
 import org.gnu.glpk.glp_iocp;
+import org.gnu.glpk.glp_prob;
 import org.gnu.glpk.glp_smcp;
 
 import com.patrikdufresne.ilp.ILPException;
@@ -228,8 +229,16 @@ public class GLPKSolver implements Solver {
 					iocp.setFp_heur(glpkopt.fpump ? GLPKConstants.GLP_ON
 							: GLPKConstants.GLP_OFF);
 
-					returns = GLPK.glp_intopt(glpklp.lp, iocp);
-
+					// Copy the problem, and solve it.
+					glp_prob copy = GLPK.glp_create_prob();
+					try{
+						GLPK.glp_copy_prob(copy, glpklp.lp, GLPKConstants.GLP_ON);
+						returns = GLPK.glp_intopt(copy, iocp);
+						GLPK.glp_copy_prob(glpklp.lp, copy, GLPKConstants.GLP_ON);
+					} finally {
+						GLPK.glp_delete_prob(copy);
+					}
+					
 					if (returns != GLPKConstants.GLP_ENOPFS) {
 						// Generate exception according to return code
 						checkSolverReturnCode(returns);
