@@ -203,7 +203,7 @@ public class GLPKSolver implements Solver {
 
 			int returns;
 			if (glpkopt.intfeasible) {
-				
+
 				// Run the solver
 				returns = GLPK.glp_intfeas1(glpklp.lp, 0, 0);
 
@@ -230,16 +230,14 @@ public class GLPKSolver implements Solver {
 					iocp.setFp_heur(glpkopt.fpump ? GLPKConstants.GLP_ON
 							: GLPKConstants.GLP_OFF);
 
-					// Copy the problem, and solve it.
+					// Copy the problem, and solve it. Otherwise, their is a
+					// data corruption.
 					glp_prob copy = GLPK.glp_create_prob();
-					try{
-						GLPK.glp_copy_prob(copy, glpklp.lp, GLPKConstants.GLP_ON);
-						returns = GLPK.glp_intopt(copy, iocp);
-						GLPK.glp_copy_prob(glpklp.lp, copy, GLPKConstants.GLP_ON);
-					} finally {
-						GLPK.glp_delete_prob(copy);
-					}
-					
+					GLPK.glp_copy_prob(copy, glpklp.lp, GLPKConstants.GLP_ON);
+					GLPK.glp_delete_prob(glpklp.lp);
+					glpklp.lp = copy;
+					returns = GLPK.glp_intopt(glpklp.lp, iocp);
+
 					if (returns != GLPKConstants.GLP_ENOPFS) {
 						// Generate exception according to return code
 						checkSolverReturnCode(returns);
