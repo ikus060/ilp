@@ -32,4 +32,11 @@ public interface ILPLogger {
 	 */
 	public void log(int severity, String message);
 
+	/**
+	 * Return the current log level.
+	 * 
+	 * @return One of the DEBUG, INFO, WARNING, ERROR constants.
+	 */
+	public int getLevel();
+
 }

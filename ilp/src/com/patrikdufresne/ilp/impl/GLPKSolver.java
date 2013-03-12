@@ -61,7 +61,7 @@ public class GLPKSolver implements Solver {
 				if (message.endsWith("\n")) { //$NON-NLS-1$
 					message = message.substring(0, str.length() - 1);
 				}
-				ILPPolicy.log(ILPLogger.ERROR, message);
+				ILPPolicy.log(ILPPolicy.getLog().getLevel(), message);
 				return false;
 			}
 		};
@@ -132,11 +132,28 @@ public class GLPKSolver implements Solver {
 
 	}
 
+	private List<GlpkCallbackListener> listeners;
+
 	/**
 	 * Default constructor.
 	 */
 	public GLPKSolver() {
 		// Nothing to do
+	}
+
+	/**
+	 * This function is used to add a callback listener to GLPK. This function
+	 * also make sure to keep track of every listeners attached to all of them
+	 * can be detach after the solving process.
+	 * 
+	 * @param listener
+	 */
+	private void addCallbackListener(GlpkCallbackListener listener) {
+		if (this.listeners == null) {
+			this.listeners = new ArrayList<GlpkCallbackListener>();
+		}
+		this.listeners.add(listener);
+		GlpkCallback.addListener(listener);
 	}
 
 	/**
@@ -159,6 +176,42 @@ public class GLPKSolver implements Solver {
 	@Override
 	public void dispose() {
 		// Nothing to dispose.
+	}
+
+	/**
+	 * Return the log level according to the ILPLogger log level.
+	 * 
+	 * <pre>
+	 * GLP_MSG_OFF—no output;
+	 * GLP_MSG_ERR—error and warning messages only;
+	 * GLP_MSG_ON —normal output;
+	 * GLP_MSG_ALL—full output (including informational messages).
+	 * </pre>
+	 */
+	private int logLevel() {
+		switch (ILPPolicy.getLog().getLevel()) {
+		case ILPLogger.DEBUG:
+			return GLPKConstants.GLP_MSG_ALL;
+		case ILPLogger.INFO:
+		case ILPLogger.WARNING:
+		default:
+			return GLPKConstants.GLP_MSG_ERR;
+		}
+	}
+
+	/**
+	 * This function is used to remove any previously added listener from GLPK.
+	 * Does nothing it there wasn't any listener added using
+	 * {@link #addCallbackListener(GlpkCallbackListener)}.
+	 * 
+	 */
+	private void removeAllCallbackListener() {
+		if (this.listeners == null) {
+			return;
+		}
+		for (GlpkCallbackListener listener : this.listeners) {
+			GlpkCallback.removeListener(listener);
+		}
 	}
 
 	/**
@@ -212,7 +265,7 @@ public class GLPKSolver implements Solver {
 				glp_iocp iocp = new glp_iocp();
 				GLPK.glp_init_iocp(iocp);
 				iocp.setPresolve(GLPKConstants.GLP_ON);
-				iocp.setMsg_lev(GLPKConstants.GLP_MSG_ERR);
+				iocp.setMsg_lev(logLevel());
 
 				// Set the branching technique
 				if (glpkopt.brTech != null) {
@@ -272,38 +325,6 @@ public class GLPKSolver implements Solver {
 
 		}
 
-	}
-
-	private List<GlpkCallbackListener> listeners;
-
-	/**
-	 * This function is used to add a callback listener to GLPK. This function
-	 * also make sure to keep track of every listeners attached to all of them
-	 * can be detach after the solving process.
-	 * 
-	 * @param listener
-	 */
-	private void addCallbackListener(GlpkCallbackListener listener) {
-		if (this.listeners == null) {
-			this.listeners = new ArrayList<GlpkCallbackListener>();
-		}
-		this.listeners.add(listener);
-		GlpkCallback.addListener(listener);
-	}
-
-	/**
-	 * This function is used to remove any previously added listener from GLPK.
-	 * Does nothing it there wasn't any listener added using
-	 * {@link #addCallbackListener(GlpkCallbackListener)}.
-	 * 
-	 */
-	private void removeAllCallbackListener() {
-		if (this.listeners == null) {
-			return;
-		}
-		for (GlpkCallbackListener listener : this.listeners) {
-			GlpkCallback.removeListener(listener);
-		}
 	}
 
 }

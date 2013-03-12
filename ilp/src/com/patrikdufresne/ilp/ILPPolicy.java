@@ -43,6 +43,11 @@ public class ILPPolicy {
 			public void log(int severity, String message) {
 				System.out.println(message);
 			}
+
+			@Override
+			public int getLevel() {
+				return ILPLogger.ERROR;
+			}
 		};
 	}
 
