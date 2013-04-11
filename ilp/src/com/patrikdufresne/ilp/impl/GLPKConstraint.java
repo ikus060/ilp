@@ -8,6 +8,7 @@ import org.gnu.glpk.GLPK;
 import org.gnu.glpk.SWIGTYPE_p_double;
 import org.gnu.glpk.SWIGTYPE_p_int;
 
+import com.patrikdufresne.ilp.AbstractLinearProblem;
 import com.patrikdufresne.ilp.Constraint;
 import com.patrikdufresne.ilp.ILPException;
 import com.patrikdufresne.ilp.Linear;
@@ -201,6 +202,7 @@ public class GLPKConstraint implements Constraint {
 	@Override
 	public void setLinear(Linear linear) {
 		checkConstraint();
+		AbstractLinearProblem.checkLinear(linear);
 
 		this.parent.makeDirty();
 		int size = linear != null ? linear.size() : 0;

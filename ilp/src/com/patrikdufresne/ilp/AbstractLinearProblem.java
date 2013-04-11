@@ -16,55 +16,31 @@ import java.util.List;
  */
 public abstract class AbstractLinearProblem implements LinearProblem {
 
-	@Override
-	public String toString() {
-
-		StringBuilder buf = new StringBuilder();
-
-		// Print the solution
-		Status status = getStatus();
-		boolean solutionAvailable = status.equals(Status.OPTIMAL)
-				|| status.equals(Status.FEASIBLE);
-		if (solutionAvailable) {
-			buf.append(getObjectiveName());
-			buf.append("="); //$NON-NLS-1$
-			buf.append(getObjectiveValue());
-			buf.append("\r\n"); //$NON-NLS-1$
+	/**
+	 * Check if the linear reference disposed variables.
+	 * 
+	 * @param linear
+	 *            the linear
+	 */
+	public static void checkLinear(Linear linear) {
+		if (linear == null || linear.size() == 0) {
+			return;
 		}
-		if (solutionAvailable) {
-			for (Variable var : getVariables()) {
-				buf.append(var.getName());
-				buf.append("="); //$NON-NLS-1$
-				buf.append(var.getValue());
-				buf.append("\r\n"); //$NON-NLS-1$
-			}
-			for (Constraint constraint : getConstraints()) {
-				buf.append("Constraint["); //$NON-NLS-1$
-				buf.append(constraint.getName());
-				buf.append("]="); //$NON-NLS-1$
-				buf.append(constraint.getValue());
-				buf.append("\r\n"); //$NON-NLS-1$
-			}
-		} else {
-			for (Variable var : getVariables()) {
-				buf.append(var.getName());
-				buf.append(":{"); //$NON-NLS-1$
-				buf.append(var.getLowerBound());
-				buf.append(".."); //$NON-NLS-1$
-				buf.append(var.getUpperBound());
-				buf.append("}\r\n"); //$NON-NLS-1$
-			}
-			for (Constraint constraint : getConstraints()) {
-				buf.append("Constraint["); //$NON-NLS-1$
-				buf.append(constraint.getName());
-				buf.append("]:{"); //$NON-NLS-1$
-				buf.append(constraint.getLowerBound());
-				buf.append(".."); //$NON-NLS-1$
-				buf.append(constraint.getUpperBound());
-				buf.append("}\r\n"); //$NON-NLS-1$
-			}
+		for (Term term : linear) {
+			checkVariable(term.getVariable());
 		}
-		return buf.toString();
+	}
+
+	/**
+	 * Throw an exception if the variable is disposed.
+	 * 
+	 * @param variable
+	 *            the variable to validate or null.
+	 */
+	public static void checkVariable(Variable variable) {
+		if (variable != null && variable.isDisposed()) {
+			throw new IllegalArgumentException("variables is disposed.");
+		}
 	}
 
 	/**
@@ -323,6 +299,57 @@ public abstract class AbstractLinearProblem implements LinearProblem {
 	 */
 	public void makeDirty() {
 		this.dirty = true;
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder buf = new StringBuilder();
+
+		// Print the solution
+		Status status = getStatus();
+		boolean solutionAvailable = status.equals(Status.OPTIMAL)
+				|| status.equals(Status.FEASIBLE);
+		if (solutionAvailable) {
+			buf.append(getObjectiveName());
+			buf.append("="); //$NON-NLS-1$
+			buf.append(getObjectiveValue());
+			buf.append("\r\n"); //$NON-NLS-1$
+		}
+		if (solutionAvailable) {
+			for (Variable var : getVariables()) {
+				buf.append(var.getName());
+				buf.append("="); //$NON-NLS-1$
+				buf.append(var.getValue());
+				buf.append("\r\n"); //$NON-NLS-1$
+			}
+			for (Constraint constraint : getConstraints()) {
+				buf.append("Constraint["); //$NON-NLS-1$
+				buf.append(constraint.getName());
+				buf.append("]="); //$NON-NLS-1$
+				buf.append(constraint.getValue());
+				buf.append("\r\n"); //$NON-NLS-1$
+			}
+		} else {
+			for (Variable var : getVariables()) {
+				buf.append(var.getName());
+				buf.append(":{"); //$NON-NLS-1$
+				buf.append(var.getLowerBound());
+				buf.append(".."); //$NON-NLS-1$
+				buf.append(var.getUpperBound());
+				buf.append("}\r\n"); //$NON-NLS-1$
+			}
+			for (Constraint constraint : getConstraints()) {
+				buf.append("Constraint["); //$NON-NLS-1$
+				buf.append(constraint.getName());
+				buf.append("]:{"); //$NON-NLS-1$
+				buf.append(constraint.getLowerBound());
+				buf.append(".."); //$NON-NLS-1$
+				buf.append(constraint.getUpperBound());
+				buf.append("}\r\n"); //$NON-NLS-1$
+			}
+		}
+		return buf.toString();
 	}
 
 }

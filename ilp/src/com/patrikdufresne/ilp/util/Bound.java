@@ -4,6 +4,9 @@
  */
 package com.patrikdufresne.ilp.util;
 
+import com.patrikdufresne.ilp.Constraint;
+import com.patrikdufresne.ilp.Variable;
+
 /**
  * A structure used to store the variable bound.
  * 
@@ -11,6 +14,25 @@ package com.patrikdufresne.ilp.util;
  * 
  */
 public class Bound {
+
+	/**
+	 * Create a new bound object from the given constraint bounds.
+	 * 
+	 * @param constraint
+	 *            the constraint to be capture
+	 * @return the bound
+	 */
+	public static Bound create(Constraint constraint) {
+		return new Bound(constraint.getLowerBound(), constraint.getUpperBound());
+	}
+
+	/**
+	 * Create a new bound object from the given variable bounds.
+	 */
+	public static Bound create(Variable variable) {
+		return new Bound(variable.getLowerBound(), variable.getUpperBound());
+	}
+
 	private Number lower;
 
 	private Number upper;
@@ -77,6 +99,27 @@ public class Bound {
 		result = prime * result
 				+ ((this.upper == null) ? 0 : this.upper.hashCode());
 		return result;
+	}
+
+	/**
+	 * Apply the bound to the given constraint
+	 * 
+	 * @param constraint
+	 */
+	public void restore(Constraint constraint) {
+		constraint.setLowerbound(lower);
+		constraint.setUpperBound(upper);
+	}
+
+	/**
+	 * Apply the bound to the given variable.
+	 * 
+	 * @param variable
+	 *            the variable
+	 */
+	public void restore(Variable variable) {
+		variable.setLowerBound(lower);
+		variable.setUpperBound(upper);
 	}
 
 	@Override
