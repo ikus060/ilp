@@ -4,11 +4,10 @@
 	<parent>
 		<groupId>com.patrikdufresne.ilp</groupId>
 		<artifactId>com.patrikdufresne.ilp-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.7-SNAPSHOT</version>
 	</parent>
 	<groupId>com.patrikdufresne.ilp.glpk</groupId>
 	<artifactId>com.patrikdufresne.ilp.glpk</artifactId>
-	<version>0.6</version>
 	<repositories>
 		<repository>
 			<id>XypronRelease</id>
@@ -17,7 +16,6 @@
 			<layout>default</layout>
 		</repository>
 	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.gnu.glpk</groupId>
@@ -44,4 +42,90 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<!-- Formatting -->
+			<plugin>
+				<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+				<artifactId>maven-java-formatter-plugin</artifactId>
+				<version>0.3.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<configFile>ilp-formatter.xml</configFile>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.patrikdufresne.ilp</groupId>
+						<artifactId>com.patrikdufresne.ilp-build-tools</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<!-- Add license header -->
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.9.0</version>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<header>license-header.txt</header>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.patrikdufresne.ilp</groupId>
+						<artifactId>com.patrikdufresne.ilp-build-tools</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											com.mycila.maven-license-plugin
+										</groupId>
+										<artifactId>
+											maven-license-plugin
+										</artifactId>
+										<versionRange>
+											[1.9.0,)
+										</versionRange>
+										<goals>
+											<goal>format</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>

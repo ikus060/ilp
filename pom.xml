@@ -3,17 +3,48 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.patrikdufresne.ilp</groupId>
 	<artifactId>com.patrikdufresne.ilp-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.7-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>com.patrikdufresne.ilp-parent</name>
-	<modules>
-		<module>com.patrikdufresne.ilp</module>
-		<module>com.patrikdufresne.ilp.glpk</module>
-		<module>com.patrikdufresne.ilp.ortools</module>
-	</modules>
 	<build>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											com.googlecode.maven-java-formatter-plugin
+										</groupId>
+										<artifactId>
+											maven-java-formatter-plugin
+										</artifactId>
+										<versionRange>
+											[0.2.0,)
+										</versionRange>
+										<goals>
+											<goal>format</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
-			<!-- javac version to 1.6 -->
+			<!-- javac version to 1.6 for all sub-project -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -23,7 +54,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<!-- generate source package -->
+			<!-- generate source package for all sub-project -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -38,4 +69,10 @@
 			</plugin>
 		</plugins>
 	</build>
+	<modules>
+		<module>com.patrikdufresne.ilp-build-tools</module>
+		<module>com.patrikdufresne.ilp</module>
+		<module>com.patrikdufresne.ilp.glpk</module>
+		<module>com.patrikdufresne.ilp.ortools</module>
+	</modules>
 </project>

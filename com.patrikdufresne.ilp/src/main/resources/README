@@ -1,3 +1,0 @@
-The ILP package required to be run with specific arguments otherwise the application won't find the native library.
-
-LD_LIBRARY_PATH=
