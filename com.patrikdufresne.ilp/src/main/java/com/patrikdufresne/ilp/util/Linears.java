@@ -44,7 +44,7 @@ public class Linears {
      * @throws NullPointerException
      *             if the snapshot doesn't contains a variable from the linear.
      */
-    public static Number compute(Linear linear, ValueSnapshot snapshot) {
+    public static Double compute(Linear linear, ValueSnapshot snapshot) {
         double value = 0;
         for (Term term : linear) {
             value += term.getCoefficient().doubleValue() * snapshot.get(term.getVariable()).doubleValue();
