@@ -6,7 +6,6 @@
 		<artifactId>com.patrikdufresne.ilp-parent</artifactId>
 		<version>0.7-SNAPSHOT</version>
 	</parent>
-	<groupId>com.patrikdufresne.ilp.glpk</groupId>
 	<artifactId>com.patrikdufresne.ilp.glpk</artifactId>
 	<repositories>
 		<repository>
@@ -31,13 +30,13 @@
 		<dependency>
 			<groupId>com.patrikdufresne.ilp</groupId>
 			<artifactId>com.patrikdufresne.ilp</artifactId>
-			<version>0.6</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<!-- Reference the test-jar from ILP -->
 		<dependency>
 			<groupId>com.patrikdufresne.ilp</groupId>
 			<artifactId>com.patrikdufresne.ilp</artifactId>
-			<version>0.6</version>
+			<version>${project.parent.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -63,7 +62,7 @@
 					<dependency>
 						<groupId>com.patrikdufresne.ilp</groupId>
 						<artifactId>com.patrikdufresne.ilp-build-tools</artifactId>
-						<version>${project.version}</version>
+						<version>${project.parent.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -87,7 +86,7 @@
 					<dependency>
 						<groupId>com.patrikdufresne.ilp</groupId>
 						<artifactId>com.patrikdufresne.ilp-build-tools</artifactId>
-						<version>${project.version}</version>
+						<version>${project.parent.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>

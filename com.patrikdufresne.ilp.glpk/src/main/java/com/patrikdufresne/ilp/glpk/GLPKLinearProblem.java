@@ -46,8 +46,7 @@ import com.patrikdufresne.ilp.Variable;
 public class GLPKLinearProblem extends AbstractLinearProblem implements IPersistentLinearProblem {
 
     /**
-     * Value return by glp_get_row_ub, glp_get_row_lb, glp_get_col_ub and
-     * glp_get_col_lb when it's not bounded.
+     * Value return by glp_get_row_ub, glp_get_row_lb, glp_get_col_ub and glp_get_col_lb when it's not bounded.
      */
     static final double DBL_MAX = Double.MAX_VALUE;
 
@@ -99,7 +98,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
     Boolean mip;
 
     /**
-     * Cached status.
+     * The status of the problem. This value is sets the UNKNOWN when any variable or constraints is changed.
      */
     Status status;
 
@@ -130,6 +129,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         // Create a new column using GLPK API.
         var.parent = this;
         var.col = GLPK.glp_add_cols(this.lp, 1);
+        this.status = Status.UNKNOWN;
 
         if (var.col != this.variables.size() + 1) {
             throw new RuntimeException("GLPKVariable.col is not set properly."); //$NON-NLS-1$
@@ -140,6 +140,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
     @Override
     public Constraint addConstraint(String name) {
         checkProblem();
+        checkConstraintName(name);
         GLPKConstraint c = new GLPKConstraint(this);
         c.setName(name);
         return c;
@@ -158,6 +159,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
 
         constraint.parent = this;
         constraint.row = GLPK.glp_add_rows(this.lp, 1);
+        this.status = Status.UNKNOWN;
 
         if (constraint.row != this.constraints.size() + 1) {
             throw new RuntimeException("GLPKConstraint.row is not set properly."); //$NON-NLS-1$
@@ -171,6 +173,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
     @Override
     public Variable addVariable(String name, VarType type) {
         checkProblem();
+        checkVariableName(name);
         GLPKVariable v = new GLPKVariable(this);
         v.setType(type);
         v.setName(name);
@@ -191,8 +194,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
     }
 
     /**
-     * Check the solution state. Throw an exception if the solution is not
-     * available.
+     * Check the solution state. Throw an exception if the solution is not available.
      */
     void checkSolution() {
         Status status = getStatus();
@@ -361,8 +363,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
     }
 
     /**
-     * This implementations read the file as CPLEX format using glp_read_lp()
-     * function.
+     * This implementations read the file as CPLEX format using glp_read_lp() function.
      */
     @Override
     public void load(File file) throws IOException {
@@ -393,6 +394,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         SWIGTYPE_p_int cols = GLPK.new_intArray(2);
         GLPK.intArray_setitem(cols, 1, var.col);
         GLPK.glp_del_cols(this.lp, 1, cols);
+        this.status = null;
 
         this.variables.remove(index);
 
@@ -415,6 +417,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         SWIGTYPE_p_int rows = GLPK.new_intArray(2);
         GLPK.intArray_setitem(rows, 1, constraint.row);
         GLPK.glp_del_rows(this.lp, 1, rows);
+        this.status = null;
 
         this.constraints.remove(index);
 
@@ -429,8 +432,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
     }
 
     /**
-     * This implementation is writing the problem in GLPK LP/MIP format to text
-     * file.
+     * This implementation is writing the problem in GLPK LP/MIP format to text file.
      */
     @Override
     public void save(File file) throws IOException {
@@ -469,9 +471,11 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         switch (direction) {
         case MAXIMIZE:
             GLPK.glp_set_obj_dir(this.lp, GLPKConstants.GLP_MAX);
+            this.status = Status.UNKNOWN;
             break;
         case MINIMIZE:
             GLPK.glp_set_obj_dir(this.lp, GLPKConstants.GLP_MIN);
+            this.status = Status.UNKNOWN;
             break;
         default:
             throw new IllegalArgumentException();
@@ -486,11 +490,13 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         checkProblem();
 
         // Sets all the coefs to zero
-        if (this.variables != null) {
-            for (GLPKVariable var : this.variables) {
-                GLPK.glp_set_obj_coef(this.lp, var.col, 0);
+        int colCount = GLPK.glp_get_num_cols(this.lp);
+        if (colCount > 0) {
+            for (int i = 1; i <= colCount; i++) {
+                GLPK.glp_set_obj_coef(this.lp, i, 0);
             }
         }
+        this.status = Status.UNKNOWN;
 
         if (objective == null || objective.size() == 0) {
             return;
@@ -500,6 +506,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         for (Term term : objective) {
             GLPK.glp_set_obj_coef(this.lp, ((GLPKVariable) term.getVariable()).col, term.getCoefficient().doubleValue());
         }
+
     }
 
     /**

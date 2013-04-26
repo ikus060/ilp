@@ -194,6 +194,6 @@ public abstract class SolverTest {
             assertEquals(2, y.getValue().intValue());
 
         }
-
     }
+
 }

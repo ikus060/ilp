@@ -34,6 +34,8 @@ import org.junit.Test;
  */
 public abstract class LinearProblemTest {
 
+    private static final Double ZERO = Double.valueOf(0);
+
     protected LinearProblem lp;
 
     protected Solver solver;
@@ -48,9 +50,7 @@ public abstract class LinearProblemTest {
     protected abstract SolverFactory doGetSolverFactory();
 
     /**
-     * Test method for
-     * {@link com.patrikdufresne.ilp.LinearProblem#addBinaryVariable(java.lang.String)}
-     * .
+     * Test method for {@link com.patrikdufresne.ilp.LinearProblem#addBinaryVariable(java.lang.String)} .
      */
     @Test
     public void testAddBinaryVariable() {
@@ -64,8 +64,7 @@ public abstract class LinearProblemTest {
     }
 
     /**
-     * Test method for
-     * {@link com.patrikdufresne.ilp.LinearProblem#getConstraints()}.
+     * Test method for {@link com.patrikdufresne.ilp.LinearProblem#getConstraints()}.
      */
     @Test
     public void testGetConstraints() {
@@ -93,9 +92,7 @@ public abstract class LinearProblemTest {
     }
 
     /**
-     * Test method for
-     * {@link com.patrikdufresne.ilp.LinearProblem#setObjectiveLinear(com.patrikdufresne.ilp.Linear)}
-     * .
+     * Test method for {@link com.patrikdufresne.ilp.LinearProblem#setObjectiveLinear(com.patrikdufresne.ilp.Linear)} .
      */
     @Test
     public void testSetObjectiveLinear() {
@@ -131,6 +128,36 @@ public abstract class LinearProblemTest {
 
         this.lp.setObjectiveDirection(LinearProblem.MAXIMIZE);
         assertEquals(LinearProblem.MAXIMIZE, this.lp.getObjectiveDirection());
+
+    }
+
+    /**
+     * Check if the status of the linear problem is unknown after touching the bound of a variable.
+     */
+    @Test
+    public void testGetStatus_AfterTouchingVariable() {
+
+        Variable x = lp.addIntegerVariable("x", ZERO, null);
+        Variable y = lp.addIntegerVariable("y", ZERO, null);
+
+        Linear linear = lp.createLinear();
+        linear.add(lp.createTerm(17, x));
+        linear.add(lp.createTerm(12, y));
+        lp.setObjectiveLinear(linear);
+        lp.setObjectiveDirection(LinearProblem.MAXIMIZE);
+        lp.addConstraint("10 x + 7 y <= 40", new int[] { 10, 7 }, new Variable[] { x, y }, null, 40);
+        lp.addConstraint("   x +   y <=  5", new int[] { 11, 1 }, new Variable[] { x, y }, null, 5);
+
+        assertTrue(solver.solve(lp, solver.createSolverOption()));
+        assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertEquals(0, x.getValue().intValue());
+        assertEquals(5, y.getValue().intValue());
+
+        // Touch a variable.
+        x.setLowerBound(null);
+
+        // Check if the state is unknown.
+        assertEquals(Status.UNKNOWN, lp.getStatus());
 
     }
 

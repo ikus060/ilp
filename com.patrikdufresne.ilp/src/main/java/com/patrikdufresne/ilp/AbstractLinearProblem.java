@@ -55,9 +55,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new variable using
-     * {@link #addVariable()} and sets the name and type using the variable
-     * setters.
+     * This implementation is creating a new variable using {@link #addVariable()} and sets the name and type using the
+     * variable setters.
      */
     @Override
     public Variable addBinaryVariable(String name) {
@@ -65,11 +64,9 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation use the function
-     * {@link #createLinear(int[], Variable[])} to create a new Linear object
-     * for <code>coefficients</code> and <code>variables</code>. Then
-     * {@link #addConstraint(String, Linear, Number, Number)} is called to
-     * create the new constraint.
+     * This implementation use the function {@link #createLinear(int[], Variable[])} to create a new Linear object for
+     * <code>coefficients</code> and <code>variables</code>. Then {@link #addConstraint(String, Linear, Number, Number)}
+     * is called to create the new constraint.
      */
     @Override
     public Constraint addConstraint(String name, int[] coefficients, Variable[] variables, int lowerBound, int upperBound) {
@@ -82,8 +79,7 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is calling
-     * {@link #addConstraint(String, Linear, Number, Number)}
+     * This implementation is calling {@link #addConstraint(String, Linear, Number, Number)}
      */
     @Override
     public Constraint addConstraint(String name, Linear linear, int lowerBound, int upperBound) {
@@ -91,8 +87,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is calling {@link #addConstraint()} and then sets the
-     * name, the linear expression and the bounds using the constraint setters.
+     * This implementation is calling {@link #addConstraint()} and then sets the name, the linear expression and the
+     * bounds using the constraint setters.
      */
     @Override
     public Constraint addConstraint(String name, Linear linear, Number lowerBound, Number upperBound) {
@@ -112,8 +108,40 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation return a {@link ConcreteLinear} object since GLPK
-     * doesn't support dynamic array.
+     * Check if the constraint name is unique. Otherwise throw an exception.
+     * 
+     * @param name
+     *            the constraint name.
+     */
+    protected void checkConstraintName(String name) {
+        if (name == null) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Undefined constraint name.");
+        }
+        for (Constraint c : getConstraints()) {
+            if (name.equals(c.getName())) {
+                throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Duplicate constraint name: " + name);
+            }
+        }
+    }
+
+    /**
+     * Throws an exception if the variable is null or if is a duplicate.
+     * 
+     * @param name
+     */
+    protected void checkVariableName(String name) {
+        if (name == null) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Undefined variable name.");
+        }
+        for (Variable v : getVariables()) {
+            if (name.equals(v.getName())) {
+                throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Duplicate variable name: " + name);
+            }
+        }
+    }
+
+    /**
+     * This implementation return a {@link ConcreteLinear} object since GLPK doesn't support dynamic array.
      */
     @Override
     public Linear createLinear() {
@@ -121,9 +149,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new Linear object for the current
-     * problem using {@link #createLinear()} and then add the new coefficient
-     * and variable.
+     * This implementation is creating a new Linear object for the current problem using {@link #createLinear()} and
+     * then add the new coefficient and variable.
      */
     @Override
     public Linear createLinear(double coefficient, Variable variable) {
@@ -131,9 +158,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new Linear object for the current
-     * problem using {@link #createLinear()} and then add the new coefficients
-     * and variables.
+     * This implementation is creating a new Linear object for the current problem using {@link #createLinear()} and
+     * then add the new coefficients and variables.
      */
     @Override
     public Linear createLinear(double[] coefficients, Variable[] variables) {
@@ -145,9 +171,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new Linear object for the current
-     * problem using {@link #createLinear()} and then add the new coefficient
-     * and variable.
+     * This implementation is creating a new Linear object for the current problem using {@link #createLinear()} and
+     * then add the new coefficient and variable.
      */
     @Override
     public Linear createLinear(float coefficient, Variable variable) {
@@ -155,9 +180,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new Linear object for the current
-     * problem using {@link #createLinear()} and then add the new coefficients
-     * and variables.
+     * This implementation is creating a new Linear object for the current problem using {@link #createLinear()} and
+     * then add the new coefficients and variables.
      */
     @Override
     public Linear createLinear(float[] coefficients, Variable[] variables) {
@@ -169,9 +193,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new Linear object for the current
-     * problem using {@link #createLinear()} and then add the new coefficient
-     * and variable.
+     * This implementation is creating a new Linear object for the current problem using {@link #createLinear()} and
+     * then add the new coefficient and variable.
      */
     @Override
     public Linear createLinear(int coefficient, Variable variable) {
@@ -179,9 +202,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new Linear object for the current
-     * problem using {@link #createLinear()} and then add the new coefficients
-     * and variables.
+     * This implementation is creating a new Linear object for the current problem using {@link #createLinear()} and
+     * then add the new coefficients and variables.
      */
     @Override
     public Linear createLinear(int[] coefficients, Variable[] variables) {
@@ -193,11 +215,9 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new {@link Linear} instance for the
-     * current problem. This function make repetitive call to
-     * {@link #createTerm(Number, Variable)}. If the coefficient list contains
-     * null value or zero, the term is not added. If the variable list contains
-     * null value, the term is not added.
+     * This implementation is creating a new {@link Linear} instance for the current problem. This function make
+     * repetitive call to {@link #createTerm(Number, Variable)}. If the coefficient list contains null value or zero,
+     * the term is not added. If the variable list contains null value, the term is not added.
      */
     @Override
     public Linear createLinear(List<? extends Number> coefficients, List<Variable> variables) {
@@ -223,9 +243,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new Linear object for the current
-     * problem using {@link #createLinear()} and then add the new coefficient
-     * and variable.
+     * This implementation is creating a new Linear object for the current problem using {@link #createLinear()} and
+     * then add the new coefficient and variable.
      */
     @Override
     public Linear createLinear(Number coefficient, Variable variable) {
@@ -238,9 +257,8 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is creating a new Linear object for the current
-     * problem using {@link #createLinear()} and then add the new coefficients
-     * and variables.
+     * This implementation is creating a new Linear object for the current problem using {@link #createLinear()} and
+     * then add the new coefficients and variables.
      */
     @Override
     public Linear createLinear(Number[] coefficients, Variable[] variables) {
@@ -248,8 +266,7 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is calling the function
-     * {@link #createTerm(Number, Variable)}.
+     * This implementation is calling the function {@link #createTerm(Number, Variable)}.
      */
     @Override
     public Term createTerm(double coefficient, Variable variable) {
@@ -257,8 +274,7 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is calling the function
-     * {@link #createTerm(Number, Variable)}.
+     * This implementation is calling the function {@link #createTerm(Number, Variable)}.
      */
     @Override
     public Term createTerm(float coefficient, Variable variable) {
@@ -266,8 +282,7 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * This implementation is calling the function
-     * {@link #createTerm(Number, Variable)}.
+     * This implementation is calling the function {@link #createTerm(Number, Variable)}.
      */
     @Override
     public Term createTerm(int coefficient, Variable variable) {

@@ -47,6 +47,62 @@ public abstract class ConstraintTest {
         }
     }
 
+    /**
+     * Check bounds setter and getters for an integer variable.
+     */
+    @Test
+    public void testBounds() {
+
+        Constraint myConstraint = lp.addConstraint("my_constraint");
+
+        // By default expect null..null bounds
+        assertEquals(null, myConstraint.getLowerBound());
+        assertEquals(null, myConstraint.getUpperBound());
+
+        // Sets fixed bounds
+        myConstraint.setLowerBound(Integer.valueOf(10));
+        myConstraint.setUpperBound(Integer.valueOf(20));
+        assertEquals(Double.valueOf(10), myConstraint.getLowerBound());
+        assertEquals(Double.valueOf(20), myConstraint.getUpperBound());
+
+        // Set unbounded lower bound.
+        myConstraint.setLowerBound(null);
+        assertEquals(null, myConstraint.getLowerBound());
+
+        // Set unbounded upper bound.
+        myConstraint.setUpperBound(null);
+        assertEquals(null, myConstraint.getUpperBound());
+
+    }
+
+    /**
+     * Check if it's possible to create two constraint with the same name.
+     */
+    @Test
+    public void testCreate_WithSameName() {
+        Linear linear = lp.createLinear();
+        lp.addConstraint("test2", linear, ONE, null);
+        try {
+            lp.addConstraint("test2", linear, ONE, null);
+            fail("Should throw an exception");
+        } catch (ILPException e) {
+            assertEquals(ILPException.ERROR_DUPLICATE_NAME, e.code);
+        }
+    }
+
+    @Test
+    public void testCreate_WithoutName() {
+
+        Linear linear = lp.createLinear();
+        try {
+            lp.addConstraint(null, linear, ONE, null);
+            fail("Should throw an exception");
+        } catch (ILPException e) {
+            assertEquals(ILPException.ERROR_DUPLICATE_NAME, e.code);
+        }
+
+    }
+
     @Test
     public void testDispose() {
 
@@ -105,34 +161,6 @@ public abstract class ConstraintTest {
     }
 
     /**
-     * Check bounds setter and getters for an integer variable.
-     */
-    @Test
-    public void testBounds() {
-
-        Constraint myConstraint = lp.addConstraint("my_constraint");
-
-        // By default expect null..null bounds
-        assertEquals(null, myConstraint.getLowerBound());
-        assertEquals(null, myConstraint.getUpperBound());
-
-        // Sets fixed bounds
-        myConstraint.setLowerBound(Integer.valueOf(10));
-        myConstraint.setUpperBound(Integer.valueOf(20));
-        assertEquals(Double.valueOf(10), myConstraint.getLowerBound());
-        assertEquals(Double.valueOf(20), myConstraint.getUpperBound());
-
-        // Set unbounded lower bound.
-        myConstraint.setLowerBound(null);
-        assertEquals(null, myConstraint.getLowerBound());
-
-        // Set unbounded upper bound.
-        myConstraint.setUpperBound(null);
-        assertEquals(null, myConstraint.getUpperBound());
-
-    }
-
-    /**
      * Check usage of getLinear function.
      */
     @Test
@@ -164,6 +192,25 @@ public abstract class ConstraintTest {
         linear = constraint.getLinear();
         assertNotNull(linear);
         assertEquals(0, linear.size());
+
+        /*
+         * Sets the linear with different vars
+         */
+        linear = lp.createLinear(new int[] { 1, 2 }, new Variable[] { var1, var2 });
+        constraint = lp.addConstraint("test3", linear, ONE, null);
+        assertEquals(linear, constraint.getLinear());
+        // Update the linear
+        linear = lp.createLinear(new int[] { 2, 1 }, new Variable[] { var1, var2 });
+        constraint.setLinear(linear);
+        assertEquals(linear, constraint.getLinear());
+        // Update the linear
+        linear = lp.createLinear(new int[] { 3 }, new Variable[] { var1 });
+        constraint.setLinear(linear);
+        assertEquals(linear, constraint.getLinear());
+        // Update the linear
+        linear = lp.createLinear(new int[] { 5 }, new Variable[] { var2 });
+        constraint.setLinear(linear);
+        assertEquals(linear, constraint.getLinear());
 
     }
 

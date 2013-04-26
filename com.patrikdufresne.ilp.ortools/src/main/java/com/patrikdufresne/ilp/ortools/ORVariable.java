@@ -131,8 +131,10 @@ public class ORVariable implements Variable {
         checkVariable();
         if (bound == null) {
             this.v.setLb(-ORLinearProblem.INFINITY);
+            this.parent.status = null;
         } else {
             this.v.setLb(bound.doubleValue());
+            this.parent.status = null;
         }
     }
 
@@ -144,8 +146,10 @@ public class ORVariable implements Variable {
         checkVariable();
         if (bound == null) {
             this.v.setUb(ORLinearProblem.INFINITY);
+            this.parent.status = null;
         } else {
             this.v.setUb(bound.doubleValue());
+            this.parent.status = null;
         }
     }
 

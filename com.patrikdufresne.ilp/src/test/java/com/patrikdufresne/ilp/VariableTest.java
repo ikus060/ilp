@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +42,30 @@ public abstract class VariableTest {
     }
 
     protected abstract SolverFactory doGetSolverFactory();
+
+    /**
+     * Check if an exception is thrown when creating two variables with the same name.
+     */
+    @Test
+    public void testCreate_WithSameName() {
+        lp.addBinaryVariable("test");
+        try {
+            lp.addBinaryVariable("test");
+            fail("Should throw an exception");
+        } catch (ILPException e) {
+            assertEquals(ILPException.ERROR_DUPLICATE_NAME, e.code);
+        }
+    }
+
+    @Test
+    public void testCreate_WithoutName() {
+        try {
+            lp.addBinaryVariable(null);
+            fail("Should throw an exception");
+        } catch (ILPException e) {
+            assertEquals(ILPException.ERROR_DUPLICATE_NAME, e.code);
+        }
+    }
 
     @Test
     public void testBounds_withFixedValue_TypeShouldBeFixed() {
@@ -128,7 +153,7 @@ public abstract class VariableTest {
      *       0.0 <= y  integer
      * </pre>
      */
-    @Test
+    @Test(expected = ILPException.class)
     public void testGetValue_AfterDispose() {
 
         // Create the model

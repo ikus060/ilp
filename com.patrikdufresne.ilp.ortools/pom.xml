@@ -6,7 +6,6 @@
 		<artifactId>com.patrikdufresne.ilp-parent</artifactId>
 		<version>0.7-SNAPSHOT</version>
 	</parent>
-	<groupId>com.patrikdufresne.ilp.ortools</groupId>
 	<artifactId>com.patrikdufresne.ilp.ortools</artifactId>
 	<repositories>
 		<repository>
@@ -18,7 +17,7 @@
 		<dependency>
 			<groupId>com.patrikdufresne.ilp</groupId>
 			<artifactId>com.patrikdufresne.ilp</artifactId>
-			<version>0.6</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -30,7 +29,7 @@
 		<dependency>
 			<groupId>com.patrikdufresne.ilp</groupId>
 			<artifactId>com.patrikdufresne.ilp</artifactId>
-			<version>0.6</version>
+			<version>${project.parent.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>

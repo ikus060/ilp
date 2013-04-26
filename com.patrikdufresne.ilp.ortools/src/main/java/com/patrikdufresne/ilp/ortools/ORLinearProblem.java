@@ -85,11 +85,9 @@ public class ORLinearProblem extends AbstractLinearProblem {
      */
     void addConstraint(ORConstraint constraint, String name) {
         constraint.parent = this;
-        if (name == null) {
-            constraint.c = this.lp.makeConstraint();
-        } else {
-            constraint.c = this.lp.makeConstraint(name);
-        }
+        checkConstraintName(name);
+        constraint.c = this.lp.makeConstraint(name);
+        this.status = null;
         if (constraint.c == null) {
             throw new RuntimeException("Failure to create the constraint"); //$NON-NLS-1$
         }
@@ -113,11 +111,13 @@ public class ORLinearProblem extends AbstractLinearProblem {
      */
     void addVariable(ORVariable variable, String name, VarType type) {
         variable.parent = this;
-
+        checkVariableName(name);
         if (VarType.BOOL.equals(type)) {
             variable.v = this.lp.makeBoolVar(name);
+            this.status = null;
         } else {
             variable.v = this.lp.makeVar(-INFINITY, INFINITY, VarType.INTEGER.equals(type), name);
+            this.status = null;
         }
         if (variable.v == null) {
             throw new RuntimeException("Failure to create the variable"); //$NON-NLS-1$
@@ -147,8 +147,7 @@ public class ORLinearProblem extends AbstractLinearProblem {
     }
 
     /**
-     * Dispose the problem.Should remove any resources allocated for the
-     * variable and the constraints.
+     * Dispose the problem.Should remove any resources allocated for the variable and the constraints.
      */
     @Override
     public void dispose() {
@@ -285,6 +284,7 @@ public class ORLinearProblem extends AbstractLinearProblem {
 
         // Delete the variable
         constraint.c.delete();
+        this.status = null;
 
         // Remove the reference from the list.
         this.constraints.remove(index);
@@ -306,6 +306,7 @@ public class ORLinearProblem extends AbstractLinearProblem {
 
         // Delete the variable
         var.v.delete();
+        this.status = null;
 
         // Remove the reference from the list.
         this.variables.remove(index);
@@ -324,9 +325,11 @@ public class ORLinearProblem extends AbstractLinearProblem {
         switch (direction) {
         case MAXIMIZE:
             this.lp.setMaximization();
+            this.status = null;
             break;
         case MINIMIZE:
             this.lp.setMinimization();
+            this.status = null;
             break;
         default:
             throw new IllegalArgumentException();
@@ -342,6 +345,7 @@ public class ORLinearProblem extends AbstractLinearProblem {
         // Clear the previous objective linear.
         MPObjective objective = this.lp.objective();
         objective.clear();
+        this.status = null;
         // Sets the objective
         if (linear != null && linear.size() > 0) {
             for (Term term : linear) {

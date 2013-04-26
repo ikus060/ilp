@@ -53,8 +53,7 @@ public class ORConstraint implements Constraint {
     }
 
     /**
-     * Check the state of the constraint. Throw an exception if the variable is
-     * disposed.
+     * Check the state of the constraint. Throw an exception if the variable is disposed.
      */
     private void checkConstraint() {
         if (isDisposed()) {
@@ -126,6 +125,8 @@ public class ORConstraint implements Constraint {
     @Override
     public void setLinear(Linear linear) {
         checkConstraint();
+        c.Clear();
+        this.parent.status = null;
         for (Term term : linear) {
             c.setCoefficient(((ORVariable) term.getVariable()).v, term.getCoefficient().doubleValue());
         }
