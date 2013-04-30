@@ -46,10 +46,6 @@ class ORLibrary {
      */
     private static final String ORTOOLS_LIB_DIR;
     /**
-     * True if the JVM is 64bits.
-     */
-    private static final boolean IS_64 = longConst() == (long /* int */) longConst();
-    /**
      * OR-tools Major version number (must be >= 0)
      */
     private static int MAJOR_VERSION = 4;
@@ -233,17 +229,6 @@ class ORLibrary {
      *            the name of the library to load (without-java or _java).
      */
     private static void loadLibrary(String name) {
-        String prop = System.getProperty("sun.arch.data.model"); //$NON-NLS-1$
-        if (prop == null) prop = System.getProperty("com.ibm.vm.bitmode"); //$NON-NLS-1$
-        if (prop != null) {
-            if ("32".equals(prop) && IS_64) { //$NON-NLS-1$
-                throw new UnsatisfiedLinkError("Cannot load 64-bit OR-tools libraries on 32-bit JVM"); //$NON-NLS-1$
-            }
-            if ("64".equals(prop) && !IS_64) { //$NON-NLS-1$
-                throw new UnsatisfiedLinkError("Cannot load 32-bit OR-tools libraries on 64-bit JVM"); //$NON-NLS-1$
-            }
-        }
-
         /* Compute the library names */
         String libName1;
         libName1 = name;

@@ -26,6 +26,9 @@ import java.util.Arrays;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
+import com.patrikdufresne.ilp.ILPLogger;
+import com.patrikdufresne.ilp.ILPPolicy;
+
 /**
  * Used to load GLPK native library.
  * 
@@ -53,10 +56,6 @@ class GLPKLibrary {
      * GLPK library path.
      */
     private static final String GLPK_LIBRARY_PATH = "glpk.library.path";
-    /**
-     * True if the JVM is 64bits.
-     */
-    private static final boolean IS_64 = longConst() == (long /* int */) longConst();
     /**
      * GLPK Major version number (must be >= 0)
      */
@@ -192,8 +191,10 @@ class GLPKLibrary {
      */
     public static void load() {
         // Load the glpk library.
+        ILPPolicy.log(ILPLogger.DEBUG, "Loading " + GLPK_LIBNAME);
         loadLibrary(GLPK_LIBNAME);
         // Load the glpk_java library
+        ILPPolicy.log(ILPLogger.DEBUG, "Loading " + GLPK_JAVA_LIBNAME);
         loadLibrary(GLPK_JAVA_LIBNAME);
     }
 
@@ -238,17 +239,6 @@ class GLPKLibrary {
      *            the name of the library to load (without-java or _java).
      */
     private static void loadLibrary(String name) {
-        String prop = System.getProperty("sun.arch.data.model"); //$NON-NLS-1$
-        if (prop == null) prop = System.getProperty("com.ibm.vm.bitmode"); //$NON-NLS-1$
-        if (prop != null) {
-            if ("32".equals(prop) && IS_64) { //$NON-NLS-1$
-                throw new UnsatisfiedLinkError("Cannot load 64-bit GLPK libraries on 32-bit JVM"); //$NON-NLS-1$
-            }
-            if ("64".equals(prop) && !IS_64) { //$NON-NLS-1$
-                throw new UnsatisfiedLinkError("Cannot load 32-bit GLPK libraries on 64-bit JVM"); //$NON-NLS-1$
-            }
-        }
-
         /* Compute the library names */
         String libName1, libName2;
         String version = System.getProperty("glpk.version"); //$NON-NLS-1$
