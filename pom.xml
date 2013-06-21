@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.patrikdufresne.ilp</groupId>
 	<artifactId>com.patrikdufresne.ilp-parent</artifactId>
-	<version>0.7-SNAPSHOT</version>
+	<version>0.8-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>com.patrikdufresne.ilp-parent</name>
 	<!-- Define the repository. Used by deploy:deploy -->

@@ -214,4 +214,15 @@ public abstract class ConstraintTest {
 
     }
 
+    /**
+     * Check if it's possible to re-create a constraint with the same name if the original constraint as been disposed.
+     */
+    @Test
+    public void testCreateDispose_WithSameName() {
+        Linear linear = lp.createLinear();
+        Constraint c = lp.addConstraint("test2", linear, ONE, null);
+        c.dispose();
+        c = lp.addConstraint("test2", linear, ONE, null);
+    }
+
 }
