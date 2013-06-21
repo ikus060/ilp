@@ -6,7 +6,14 @@
 	<version>0.8-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>com.patrikdufresne.ilp-parent</name>
-	<!-- Define the repository. Used by deploy:deploy -->
+	<!-- Define repo -->
+	<repositories>
+		<repository>
+			<id>patrikdufresne</id>
+			<url>http://nexus.patrikdufresne.com/content/repositories/public/</url>
+		</repository>
+	</repositories>
+	<!-- Define deployment repo -->
 	<distributionManagement>
 		<repository>
 			<id>patrikdufresne</id>
@@ -19,6 +26,12 @@
 			<url>http://nexus.patrikdufresne.com/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+	<scm>
+		<developerConnection>scm:git:http://git.patrikdufresne.com/ilp.git</developerConnection>
+	</scm>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<build>
 		<plugins>
 			<!-- javac version to 1.6 for all sub-project -->

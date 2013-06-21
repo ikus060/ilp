@@ -57,6 +57,7 @@
 				</executions>
 				<configuration>
 					<configFile>ilp-formatter.xml</configFile>
+					<lineEnding>CRLF</lineEnding>
 				</configuration>
 				<dependencies>
 					<dependency>

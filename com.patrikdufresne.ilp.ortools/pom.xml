@@ -7,12 +7,6 @@
 		<version>0.8-SNAPSHOT</version>
 	</parent>
 	<artifactId>com.patrikdufresne.ilp.ortools</artifactId>
-	<repositories>
-		<repository>
-			<id>patrikdufresne</id>
-			<url>http://nexus.patrikdufresne.com/content/repositories/public/</url>
-		</repository>
-	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>com.patrikdufresne.ilp</groupId>
@@ -55,6 +49,7 @@
 				</executions>
 				<configuration>
 					<configFile>ilp-formatter.xml</configFile>
+					<lineEnding>CRLF</lineEnding>
 				</configuration>
 				<dependencies>
 					<dependency>
