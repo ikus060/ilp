@@ -24,8 +24,7 @@ import com.patrikdufresne.ilp.VarType;
 import com.patrikdufresne.ilp.Variable;
 
 /**
- * This class is a complete implementation of the {@link Variable} interface for
- * GLPK solver.
+ * This class is a complete implementation of the {@link Variable} interface for GLPK solver.
  * 
  * @author Patrik Dufresne
  * 
@@ -45,15 +44,15 @@ public class GLPKVariable implements Variable {
      * @param parent
      *            the parent problem.
      */
-    GLPKVariable(GLPKLinearProblem parent) {
+    GLPKVariable(GLPKLinearProblem parent, String name) {
         if (parent == null) {
             throw new NullPointerException();
         }
         parent.checkProblem();
 
         // Call the parent function to complete the opperation.
-        parent.addCol(this);
-
+        parent.addCol(this, name);
+        setName(name);
     }
 
     /**
@@ -141,8 +140,7 @@ public class GLPKVariable implements Variable {
     }
 
     /**
-     * This implementation check if the {@link #col} property is set to zero (0)
-     * and if the parent is nul.
+     * This implementation check if the {@link #col} property is set to zero (0) and if the parent is nul.
      */
     @Override
     public boolean isDisposed() {
@@ -168,7 +166,7 @@ public class GLPKVariable implements Variable {
      * 
      * @param name
      */
-    public void setName(String name) {
+    private void setName(String name) {
         checkVariable();
 
         if (name != null && name.length() > 255) {

@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.gnu.glpk.GLPK;
 import org.gnu.glpk.GLPKConstants;
@@ -87,6 +89,10 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
      */
     private List<GLPKConstraint> constraints;
 
+    private Set<String> constraintNames;
+
+    private Set<String> variableNames;
+
     /**
      * Private reference on the glpk problem.
      */
@@ -115,15 +121,48 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
     }
 
     /**
+     * Check if the constraint name is unique. Otherwise throw an exception.
+     * 
+     * @param name
+     *            the constraint name.
+     */
+    void checkConstraintName(String name) {
+        if (name == null) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Undefined constraint name.");
+        }
+        if (this.constraintNames != null && this.constraintNames.contains(name)) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Duplicate constraint name: " + name);
+        }
+    }
+
+    /**
+     * Check if the variable name is unique. Otherwise throw an exception.
+     * 
+     * @param name
+     *            the constraint name.
+     */
+    void checkVariableName(String name) {
+        if (name == null) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Undefined variable name.");
+        }
+        if (this.variableNames != null && this.variableNames.contains(name)) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Duplicate variable name: " + name);
+        }
+    }
+
+    /**
      * Should be called for every new instance of GLPKVariable
      * 
      * @param var
      *            the variable to be added to the problem.
      */
-    synchronized void addCol(GLPKVariable var) {
+    synchronized void addCol(GLPKVariable var, String name) {
         this.mip = null;
         if (this.variables == null) {
             this.variables = new ArrayList<GLPKVariable>();
+        }
+        if (this.variableNames == null) {
+            this.variableNames = new HashSet<String>();
         }
 
         // Create a new column using GLPK API.
@@ -135,14 +174,14 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
             throw new RuntimeException("GLPKVariable.col is not set properly."); //$NON-NLS-1$
         }
         this.variables.add(var);
+        this.variableNames.add(name);
     }
 
     @Override
     public Constraint addConstraint(String name) {
         checkProblem();
         checkConstraintName(name);
-        GLPKConstraint c = new GLPKConstraint(this);
-        c.setName(name);
+        GLPKConstraint c = new GLPKConstraint(this, name);
         return c;
     }
 
@@ -152,9 +191,12 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
      * @param constraint
      *            the constraint to be added to the problem.
      */
-    synchronized void addRow(GLPKConstraint constraint) {
+    synchronized void addRow(GLPKConstraint constraint, String name) {
         if (this.constraints == null) {
             this.constraints = new ArrayList<GLPKConstraint>();
+        }
+        if (this.constraintNames == null) {
+            this.constraintNames = new HashSet<String>();
         }
 
         constraint.parent = this;
@@ -165,6 +207,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
             throw new RuntimeException("GLPKConstraint.row is not set properly."); //$NON-NLS-1$
         }
         this.constraints.add(constraint);
+        this.constraintNames.add(name);
     }
 
     /**
@@ -174,9 +217,8 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
     public Variable addVariable(String name, VarType type) {
         checkProblem();
         checkVariableName(name);
-        GLPKVariable v = new GLPKVariable(this);
+        GLPKVariable v = new GLPKVariable(this, name);
         v.setType(type);
-        v.setName(name);
         if (VarType.INTEGER.equals(type) || VarType.REAL.equals(type)) {
             v.setLowerBound(null);
             v.setUpperBound(null);
@@ -391,12 +433,14 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
             throw new RuntimeException("GLPKVariable not in the variable list."); //$NON-NLS-1$
         }
 
+        String name = var.getName();
         SWIGTYPE_p_int cols = GLPK.new_intArray(2);
         GLPK.intArray_setitem(cols, 1, var.col);
         GLPK.glp_del_cols(this.lp, 1, cols);
         this.status = null;
 
         this.variables.remove(index);
+        this.variableNames.remove(name);
 
         var.col = 0;
         var.parent = null;
@@ -414,12 +458,14 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
             throw new RuntimeException("GLPKConstraint not in the constraint list."); //$NON-NLS-1$
         }
 
+        String name = constraint.getName();
         SWIGTYPE_p_int rows = GLPK.new_intArray(2);
         GLPK.intArray_setitem(rows, 1, constraint.row);
         GLPK.glp_del_rows(this.lp, 1, rows);
         this.status = null;
 
         this.constraints.remove(index);
+        this.constraintNames.remove(name);
 
         constraint.row = 0;
         constraint.parent = null;

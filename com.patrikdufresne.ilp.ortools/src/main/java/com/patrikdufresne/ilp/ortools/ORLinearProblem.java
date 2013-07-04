@@ -18,7 +18,9 @@ package com.patrikdufresne.ilp.ortools;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.ortools.linearsolver.MPObjective;
 import com.google.ortools.linearsolver.MPSolver;
@@ -43,7 +45,7 @@ public class ORLinearProblem extends AbstractLinearProblem {
     /**
      * Need to keep reference on every constraint (row).
      */
-    private List<ORConstraint> constraints;
+    private Map<String, ORConstraint> constraints;
 
     /**
      * Represent the linear problem.
@@ -62,7 +64,7 @@ public class ORLinearProblem extends AbstractLinearProblem {
     /**
      * Need to keep reference on every variable (col).
      */
-    private List<ORVariable> variables;
+    private Map<String, ORVariable> variables;
 
     /**
      * Create a new linear problem.
@@ -71,8 +73,8 @@ public class ORLinearProblem extends AbstractLinearProblem {
      */
     ORLinearProblem(MPSolver lp) {
         this.lp = lp;
-        this.constraints = new ArrayList<ORConstraint>();
-        this.variables = new ArrayList<ORVariable>();
+        this.constraints = new LinkedHashMap<String, ORConstraint>();
+        this.variables = new LinkedHashMap<String, ORVariable>();
     }
 
     /**
@@ -91,7 +93,7 @@ public class ORLinearProblem extends AbstractLinearProblem {
         if (constraint.c == null) {
             throw new RuntimeException("Failure to create the constraint"); //$NON-NLS-1$
         }
-        this.constraints.add(constraint);
+        this.constraints.put(name, constraint);
     }
 
     @Override
@@ -122,12 +124,27 @@ public class ORLinearProblem extends AbstractLinearProblem {
         if (variable.v == null) {
             throw new RuntimeException("Failure to create the variable"); //$NON-NLS-1$
         }
-        this.variables.add(variable);
+        this.variables.put(name, variable);
     }
 
     @Override
     public Variable addVariable(String name, VarType type) {
         return new ORVariable(this, name, type);
+    }
+
+    /**
+     * Check if the constraint name is unique. Otherwise throw an exception.
+     * 
+     * @param name
+     *            the constraint name.
+     */
+    void checkConstraintName(String name) {
+        if (name == null) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Undefined constraint name.");
+        }
+        if (this.constraints != null && this.constraints.containsKey(name)) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Duplicate constraint name: " + name);
+        }
     }
 
     /**
@@ -147,6 +164,21 @@ public class ORLinearProblem extends AbstractLinearProblem {
     }
 
     /**
+     * Check if the variable name is unique. Otherwise throw an exception.
+     * 
+     * @param name
+     *            the constraint name.
+     */
+    void checkVariableName(String name) {
+        if (name == null) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Undefined variable name.");
+        }
+        if (this.variables != null && this.variables.containsKey(name)) {
+            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Duplicate variable name: " + name);
+        }
+    }
+
+    /**
      * Dispose the problem.Should remove any resources allocated for the variable and the constraints.
      */
     @Override
@@ -156,14 +188,16 @@ public class ORLinearProblem extends AbstractLinearProblem {
         }
         this.lp.delete();
         this.lp = null;
-        for (ORConstraint c : this.constraints) {
+        for (ORConstraint c : this.constraints.values()) {
             c.c = null;
             c.parent = null;
         }
-        for (ORVariable v : this.variables) {
+        this.constraints = null;
+        for (ORVariable v : this.variables.values()) {
             v.v = null;
             v.parent = null;
         }
+        this.variables = null;
     }
 
     /**
@@ -172,7 +206,7 @@ public class ORLinearProblem extends AbstractLinearProblem {
     @Override
     public Collection<? extends Constraint> getConstraints() {
         if (this.unmodifiableConstraints == null) {
-            this.unmodifiableConstraints = Collections.unmodifiableCollection(this.constraints);
+            this.unmodifiableConstraints = Collections.unmodifiableCollection(this.constraints.values());
         }
         return this.unmodifiableConstraints;
     }
@@ -210,7 +244,7 @@ public class ORLinearProblem extends AbstractLinearProblem {
         checkProblem();
         Linear linear = new ConcreteLinear();
         MPObjective objective = this.lp.objective();
-        for (ORVariable v : this.variables) {
+        for (ORVariable v : this.variables.values()) {
             double coef = objective.getCoefficient(v.v);
             if (coef != 0) {
                 linear.add(new ConcreteTerm(Double.valueOf(coef), v));
@@ -258,9 +292,9 @@ public class ORLinearProblem extends AbstractLinearProblem {
     @Override
     public Collection<ORVariable> getVariables() {
         if (this.unmodifiableVariables == null) {
-            this.unmodifiableVariables = Collections.unmodifiableCollection(this.variables);
+            this.unmodifiableVariables = Collections.unmodifiableCollection(this.variables.values());
         }
-        return this.variables;
+        return this.unmodifiableVariables;
     }
 
     /**
@@ -278,16 +312,17 @@ public class ORLinearProblem extends AbstractLinearProblem {
      */
     void removeConstraint(ORConstraint constraint) {
         int index;
-        if (this.constraints == null || (index = this.constraints.indexOf(constraint)) < 0) {
+        if (this.constraints == null || this.constraints.get(constraint.getName()) != constraint) {
             throw new RuntimeException("ORVariable not in the variable list."); //$NON-NLS-1$
         }
 
         // Delete the variable
+        String name = constraint.getName();
         constraint.c.delete();
         this.status = null;
 
         // Remove the reference from the list.
-        this.constraints.remove(index);
+        this.constraints.remove(name);
 
         constraint.c = null;
         constraint.parent = null;
@@ -300,16 +335,17 @@ public class ORLinearProblem extends AbstractLinearProblem {
      */
     void removeVariable(ORVariable var) {
         int index;
-        if (this.variables == null || (index = this.variables.indexOf(var)) < 0) {
+        if (this.variables == null || this.variables.get(var.getName()) != var) {
             throw new RuntimeException("ORVariable not in the variable list."); //$NON-NLS-1$
         }
 
         // Delete the variable
+        String name = var.getName();
         var.v.delete();
         this.status = null;
 
         // Remove the reference from the list.
-        this.variables.remove(index);
+        this.variables.remove(name);
 
         var.v = null;
         var.parent = null;

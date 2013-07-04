@@ -25,4 +25,9 @@ public class ORConstraintTest extends ConstraintTest {
         return ORSolverFactory.instance();
     }
 
+    @Override
+    public void testCreateDispose_WithSameName() {
+        // FIXME ORTools doesn't support this !
+    }
+
 }

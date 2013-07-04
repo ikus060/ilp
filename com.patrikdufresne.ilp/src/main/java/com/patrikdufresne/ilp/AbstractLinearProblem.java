@@ -108,39 +108,6 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
-     * Check if the constraint name is unique. Otherwise throw an exception.
-     * 
-     * @param name
-     *            the constraint name.
-     */
-    protected void checkConstraintName(String name) {
-        if (name == null) {
-            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Undefined constraint name.");
-        }
-        for (Constraint c : getConstraints()) {
-            if (name.equals(c.getName())) {
-                throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Duplicate constraint name: " + name);
-            }
-        }
-    }
-
-    /**
-     * Throws an exception if the variable is null or if is a duplicate.
-     * 
-     * @param name
-     */
-    protected void checkVariableName(String name) {
-        if (name == null) {
-            throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Undefined variable name.");
-        }
-        for (Variable v : getVariables()) {
-            if (name.equals(v.getName())) {
-                throw new ILPException(ILPException.ERROR_DUPLICATE_NAME, "Duplicate variable name: " + name);
-            }
-        }
-    }
-
-    /**
      * This implementation return a {@link ConcreteLinear} object since GLPK doesn't support dynamic array.
      */
     @Override

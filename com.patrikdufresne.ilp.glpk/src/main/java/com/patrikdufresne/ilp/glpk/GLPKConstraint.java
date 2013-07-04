@@ -65,14 +65,15 @@ public class GLPKConstraint implements Constraint {
      * @param row
      *            the constraint row index
      */
-    GLPKConstraint(GLPKLinearProblem parent) {
+    GLPKConstraint(GLPKLinearProblem parent, String name) {
         if (parent == null) {
             throw new NullPointerException();
         }
         parent.checkProblem();
 
         // Call the parent function to complete the work
-        parent.addRow(this);
+        parent.addRow(this, name);
+        setName(name);
     }
 
     /**
@@ -233,7 +234,7 @@ public class GLPKConstraint implements Constraint {
     /**
      * Sets the GLPK row name.
      */
-    public void setName(String name) {
+    private void setName(String name) {
         checkConstraint();
 
         if (name != null && name.length() > 255) {
