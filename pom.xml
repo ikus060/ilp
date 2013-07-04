@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.patrikdufresne.ilp</groupId>
 	<artifactId>com.patrikdufresne.ilp-parent</artifactId>
-	<version>0.9</version>
+	<version>0.10-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>com.patrikdufresne.ilp-parent</name>
 	<!-- Define repo -->
