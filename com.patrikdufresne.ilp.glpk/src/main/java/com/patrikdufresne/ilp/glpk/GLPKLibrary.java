@@ -20,11 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
 
 import com.patrikdufresne.ilp.ILPLogger;
 import com.patrikdufresne.ilp.ILPPolicy;
@@ -68,6 +64,13 @@ class GLPKLibrary {
      * The file separator.
      */
     private static final String SEPARATOR;
+
+    /**
+     * The resource class path separator.
+     * <p>
+     * This separator is used with getResource()
+     */
+    private static final String RES_SEPARATOR = "/";
 
     static {
         /* Initialize the constant */
@@ -154,7 +157,7 @@ class GLPKLibrary {
         boolean extracted = false;
         try {
             if (!file.exists()) {
-                is = GLPKLibrary.class.getResourceAsStream("/" + resourceName); //$NON-NLS-1$
+                is = GLPKLibrary.class.getResourceAsStream(RES_SEPARATOR + resourceName); //$NON-NLS-1$
                 if (is != null) {
                     extracted = true;
                     int read;
@@ -199,9 +202,8 @@ class GLPKLibrary {
     }
 
     /**
-     * This function will update the java.library.path dynamically and then try
-     * to load the library. The advantage of using this function is the ability
-     * to change the search path of the library.
+     * This function will update the java.library.path dynamically and then try to load the library. The advantage of
+     * using this function is the ability to change the search path of the library.
      * 
      * @param path
      *            the search path to be added to java.library.path.
@@ -228,12 +230,10 @@ class GLPKLibrary {
     }
 
     /**
-     * Loads the shared library that matches the version of the Java code which
-     * is currently running. GLPK-java shared libraries follow an encoding
-     * scheme where the major, minor and revision numbers are embedded in the
-     * library name and this along with <code>name</code> is used to load the
-     * library. If this fails, <code>name</code> is used in another attempt to
-     * load the library, this time ignoring the GLPK version encoding scheme.
+     * Loads the shared library that matches the version of the Java code which is currently running. GLPK-java shared
+     * libraries follow an encoding scheme where the major, minor and revision numbers are embedded in the library name
+     * and this along with <code>name</code> is used to load the library. If this fails, <code>name</code> is used in
+     * another attempt to load the library, this time ignoring the GLPK version encoding scheme.
      * 
      * @param name
      *            the name of the library to load (without-java or _java).
@@ -270,8 +270,7 @@ class GLPKLibrary {
         if (load(null, libName2, message)) return;
 
         /*
-         * Try loading library from the tmp directory if glpk.library.path is
-         * not specified
+         * Try loading library from the tmp directory if glpk.library.path is not specified
          */
         String fileName1 = mapLibraryName(libName1);
         String fileName2 = mapLibraryName(libName2);
@@ -288,27 +287,20 @@ class GLPKLibrary {
         }
 
         /*
-         * Try extracting and loading library from jar. Embedded jars are
-         * organized in sub-directories.
+         * Try extracting and loading library from jar. Embedded jars are organized in sub-directories.
          */
         if (path != null) {
-            if (extractAndLoad(libName1, path + SEPARATOR + fileName1, os() + SEPARATOR + arch() + SEPARATOR + fileName1, message)) return;
-            if (extractAndLoad(libName2, path + SEPARATOR + fileName2, os() + SEPARATOR + arch() + SEPARATOR + fileName2, message)) return;
+            if (extractAndLoad(libName1, path + RES_SEPARATOR + fileName1, os() + RES_SEPARATOR + arch() + RES_SEPARATOR + fileName1, message)) return;
+            if (extractAndLoad(libName2, path + RES_SEPARATOR + fileName2, os() + RES_SEPARATOR + arch() + RES_SEPARATOR + fileName2, message)) return;
         }
 
         /* Failed to find the library */
         throw new UnsatisfiedLinkError("Could not load GLPK library. Reasons: " + message.toString()); //$NON-NLS-1$
     }
 
-    /* Use method instead of in-lined constants to avoid compiler warnings */
-    private static long longConst() {
-        return 0x1FFFFFFFFL;
-    }
-
     private static String mapLibraryName(String libName) {
         /*
-         * GLPK libraries in the Macintosh use the extension .jnilib but the
-         * some VMs map to .dylib.
+         * GLPK libraries in the Macintosh use the extension .jnilib but the some VMs map to .dylib.
          */
         libName = System.mapLibraryName(libName);
         String ext = ".dylib"; //$NON-NLS-1$

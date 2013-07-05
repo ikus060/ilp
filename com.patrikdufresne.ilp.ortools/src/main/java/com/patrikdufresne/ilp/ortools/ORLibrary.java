@@ -34,10 +34,6 @@ class ORLibrary {
      */
     private static final String DELIMITER;
     /**
-     * OR-tools library name.
-     */
-    private static final String ORTOOLS_LIBNAME = "TODO";
-    /**
      * OR-tools java library name.
      */
     private static final String ORTOOLS_JAVA_LIBNAME = "jnilinearsolver";
@@ -46,21 +42,20 @@ class ORLibrary {
      */
     private static final String ORTOOLS_LIB_DIR;
     /**
-     * OR-tools Major version number (must be >= 0)
+     * OR-tools library path property name.
      */
-    private static int MAJOR_VERSION = 4;
+    private static final String ORTOOLS_LIBRARY_PATH = "ortools.library.path";
     /**
-     * OR-tools Minor version number (must be in the range 0..999)
+     * The resource class path separator.
+     * <p>
+     * This separator is used with getResource()
      */
-    private static int MINOR_VERSION = 47;
+    private static final String RES_SEPARATOR = "/";
+
     /**
      * The file separator.
      */
     private static final String SEPARATOR;
-    /**
-     * OR-tools library path property name.
-     */
-    private static final String ORTOOLS_LIBRARY_PATH = "ortools.library.path";
 
     static {
         /* Initialize the constant */
@@ -147,7 +142,7 @@ class ORLibrary {
         boolean extracted = false;
         try {
             if (!file.exists()) {
-                is = ORLibrary.class.getResourceAsStream("/" + resourceName); //$NON-NLS-1$
+                is = ORLibrary.class.getResourceAsStream(RES_SEPARATOR + resourceName); //$NON-NLS-1$
                 if (is != null) {
                     extracted = true;
                     int read;
@@ -188,9 +183,8 @@ class ORLibrary {
     }
 
     /**
-     * This function will update the java.library.path dynamically and then try
-     * to load the library. The advantage of using this function is the ability
-     * to change the search path of the library.
+     * This function will update the java.library.path dynamically and then try to load the library. The advantage of
+     * using this function is the ability to change the search path of the library.
      * 
      * @param path
      *            the search path to be added to java.library.path.
@@ -217,13 +211,10 @@ class ORLibrary {
     }
 
     /**
-     * Loads the shared library that matches the version of the Java code which
-     * is currently running. OR-tools-java shared libraries follow an encoding
-     * scheme where the major, minor and revision numbers are embedded in the
-     * library name and this along with <code>name</code> is used to load the
-     * library. If this fails, <code>name</code> is used in another attempt to
-     * load the library, this time ignoring the OR-tools version encoding
-     * scheme.
+     * Loads the shared library that matches the version of the Java code which is currently running. OR-tools-java
+     * shared libraries follow an encoding scheme where the major, minor and revision numbers are embedded in the
+     * library name and this along with <code>name</code> is used to load the library. If this fails, <code>name</code>
+     * is used in another attempt to load the library, this time ignoring the OR-tools version encoding scheme.
      * 
      * @param name
      *            the name of the library to load (without-java or _java).
@@ -246,8 +237,7 @@ class ORLibrary {
         if (load(null, libName1, message)) return;
 
         /*
-         * Try loading library from the tmp directory if glpk.library.path is
-         * not specified
+         * Try loading library from the tmp directory if glpk.library.path is not specified
          */
         String fileName1 = mapLibraryName(libName1);
         if (path == null) {
@@ -262,26 +252,19 @@ class ORLibrary {
         }
 
         /*
-         * Try extracting and loading library from jar. Embedded jars are
-         * organized in sub-directories.
+         * Try extracting and loading library from jar. Embedded jars are organized in sub-directories.
          */
         if (path != null) {
-            if (extractAndLoad(libName1, path + SEPARATOR + fileName1, os() + SEPARATOR + arch() + SEPARATOR + fileName1, message)) return;
+            if (extractAndLoad(libName1, path + RES_SEPARATOR + fileName1, os() + RES_SEPARATOR + arch() + RES_SEPARATOR + fileName1, message)) return;
         }
 
         /* Failed to find the library */
         throw new UnsatisfiedLinkError("Could not load OR-tools library. Reasons: " + message.toString()); //$NON-NLS-1$
     }
 
-    /* Use method instead of in-lined constants to avoid compiler warnings */
-    private static long longConst() {
-        return 0x1FFFFFFFFL;
-    }
-
     private static String mapLibraryName(String libName) {
         /*
-         * OR-tools libraries in the Macintosh use the extension .jnilib but the
-         * some VMs map to .dylib.
+         * OR-tools libraries in the Macintosh use the extension .jnilib but the some VMs map to .dylib.
          */
         libName = System.mapLibraryName(libName);
         String ext = ".dylib"; //$NON-NLS-1$
