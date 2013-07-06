@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.patrikdufresne.ilp</groupId>
 		<artifactId>com.patrikdufresne.ilp-parent</artifactId>
-		<version>0.11</version>
+		<version>0.12-SNAPSHOT</version>
 	</parent>
 	<artifactId>com.patrikdufresne.ilp.ortools</artifactId>
 	<dependencies>
