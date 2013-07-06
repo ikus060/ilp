@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.gnu.glpk.GLPK;
 import org.gnu.glpk.GLPKConstants;
@@ -32,6 +33,8 @@ import org.gnu.glpk.glp_prob;
 import com.patrikdufresne.ilp.AbstractLinearProblem;
 import com.patrikdufresne.ilp.Constraint;
 import com.patrikdufresne.ilp.ILPException;
+import com.patrikdufresne.ilp.ILPLogger;
+import com.patrikdufresne.ilp.ILPPolicy;
 import com.patrikdufresne.ilp.IPersistentLinearProblem;
 import com.patrikdufresne.ilp.Linear;
 import com.patrikdufresne.ilp.Status;

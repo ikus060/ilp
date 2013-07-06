@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
+import org.gnu.glpk.GLPK;
+
 import com.patrikdufresne.ilp.ILPLogger;
 import com.patrikdufresne.ilp.ILPPolicy;
 
@@ -199,6 +201,12 @@ class GLPKLibrary {
         // Load the glpk_java library
         ILPPolicy.log(ILPLogger.DEBUG, "Loading " + GLPK_JAVA_LIBNAME);
         loadLibrary(GLPK_JAVA_LIBNAME);
+        // Check GLPK Version
+        String version = GLPK.glp_version();
+        String expected = MAJOR_VERSION + "." + MINOR_VERSION;
+        if (version.equals(expected)) {
+            throw new UnsatisfiedLinkError("Could not load GLPK library. Current version (" + version + ") doesn't match expected version (" + expected + ")");
+        }
     }
 
     /**
