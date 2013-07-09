@@ -61,7 +61,7 @@ class GLPKLibrary {
     /**
      * GLPK Minor version number (must be in the range 0..999)
      */
-    private static int MINOR_VERSION = 47;
+    private static int MINOR_VERSION = 51;
     /**
      * The file separator.
      */
@@ -204,7 +204,7 @@ class GLPKLibrary {
         // Check GLPK Version
         String version = GLPK.glp_version();
         String expected = MAJOR_VERSION + "." + MINOR_VERSION;
-        if (version.equals(expected)) {
+        if (!version.equals(expected)) {
             throw new UnsatisfiedLinkError("Could not load GLPK library. Current version (" + version + ") doesn't match expected version (" + expected + ")");
         }
     }
