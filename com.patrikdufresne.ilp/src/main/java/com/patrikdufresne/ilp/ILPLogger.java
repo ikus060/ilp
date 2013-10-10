@@ -35,6 +35,8 @@ public interface ILPLogger {
 
     public static final int ERROR = 0x04;
 
+    public static final int TRACE = 0x05;
+
     /**
      * Logs the given status.
      * 

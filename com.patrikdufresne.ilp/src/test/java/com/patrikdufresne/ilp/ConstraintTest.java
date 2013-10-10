@@ -200,7 +200,7 @@ public abstract class ConstraintTest {
         constraint = lp.addConstraint("test3", linear, ONE, null);
         assertEquals(linear, constraint.getLinear());
         // Update the linear
-        linear = lp.createLinear(new int[] { 2, 1 }, new Variable[] { var1, var2 });
+        linear = lp.createLinear(new int[] { 4, 5 }, new Variable[] { var1, var2 });
         constraint.setLinear(linear);
         assertEquals(linear, constraint.getLinear());
         // Update the linear

@@ -298,8 +298,6 @@ public abstract class AbstractLinearProblem implements LinearProblem {
             for (Constraint constraint : getConstraints()) {
                 buf.append("Constraint["); //$NON-NLS-1$
                 buf.append(constraint.getName());
-                buf.append("]="); //$NON-NLS-1$
-                buf.append(constraint.getValue());
                 buf.append("\r\n"); //$NON-NLS-1$
             }
         } else {

@@ -21,8 +21,8 @@ import com.patrikdufresne.ilp.Linear;
 import com.patrikdufresne.ilp.LinearProblem;
 
 /**
- * This class represent a snapshot of a constraint. This may be used to
- * temporarily release a constraint and restore it later on.
+ * This class represent a snapshot of a constraint. This may be used to temporarily release a constraint and restore it
+ * later on.
  * 
  * @author Patrik Dufresne
  * 
@@ -72,8 +72,11 @@ public class ConstraintSnapshot {
         if (bound == null) {
             throw new IllegalArgumentException();
         }
+        if (linear == null) {
+            throw new IllegalArgumentException();
+        }
         this.name = name;
-        this.linear = linear == null ? null : new ImmutableLinear(linear);
+        this.linear = new ImmutableLinear(linear);
         this.bound = bound;
     }
 
@@ -112,8 +115,7 @@ public class ConstraintSnapshot {
     }
 
     /**
-     * Create a new constraints to represent the snapshot within the given
-     * linear problem.
+     * Create a new constraints to represent the snapshot within the given linear problem.
      * 
      * @param lp
      *            the linear problem where to create the constraint.
@@ -124,12 +126,7 @@ public class ConstraintSnapshot {
             throw new IllegalArgumentException();
         }
         // Create the constraint
-        Constraint constraint = lp.addConstraint(this.name);
-        if (this.linear != null) {
-            constraint.setLinear(linear);
-        }
-        this.bound.restore(constraint);
-        return constraint;
+        return lp.addConstraint(this.name, this.linear, this.bound.getLower(), this.bound.getUpper());
     }
 
 }

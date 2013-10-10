@@ -62,6 +62,6 @@
 		<module>com.patrikdufresne.ilp-build-tools</module>
 		<module>com.patrikdufresne.ilp</module>
 		<module>com.patrikdufresne.ilp.glpk</module>
-		<module>com.patrikdufresne.ilp.ortools</module>
+		<module>com.patrikdufresne.ilp.cbc</module>
 	</modules>
 </project>

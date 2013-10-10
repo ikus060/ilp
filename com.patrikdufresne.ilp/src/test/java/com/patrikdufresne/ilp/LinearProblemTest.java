@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +49,18 @@ public abstract class LinearProblemTest {
     }
 
     protected abstract SolverFactory doGetSolverFactory();
+
+    @Test
+    public void testAddConstraints() {
+        Variable x = lp.addIntegerVariable("x", ZERO, null);
+        Variable y = lp.addIntegerVariable("y", ZERO, null);
+        Linear l = lp.createLinear(new int[] { 23, 15 }, new Variable[] { x, y });
+        Constraint c1 = lp.addConstraint("name1", l, -45, 78);
+        assertEquals("name1", c1.getName());
+        assertEquals(l, c1.getLinear());
+        assertEquals(-45, c1.getLowerBound().doubleValue(), 0.0001);
+        assertEquals(78, c1.getUpperBound().doubleValue(), 0.0001);
+    }
 
     /**
      * Test method for {@link com.patrikdufresne.ilp.LinearProblem#addBinaryVariable(java.lang.String)} .
@@ -98,14 +111,24 @@ public abstract class LinearProblemTest {
     public void testSetObjectiveLinear() {
 
         // Set dummy objective
-        Variable dummy = lp.addBinaryVariable("dummy");
-        lp.setObjectiveLinear(lp.createLinear(1, dummy));
+        Variable dummy1 = lp.addBinaryVariable("dummy1");
+        Variable dummy2 = lp.addBinaryVariable("dummy2");
+        Variable dummy3 = lp.addBinaryVariable("dummy3");
+        double[] coef = new double[] { 13, 24 };
+        Variable[] var = new Variable[] { dummy1, dummy3 };
+        lp.setObjectiveLinear(lp.createLinear(coef, var));
         Linear linear;
         assertNotNull(linear = lp.getObjectiveLinear());
-        assertEquals(1, linear.size());
-        Term term = linear.iterator().next();
-        assertEquals(1, term.getCoefficient().intValue());
-        assertEquals(dummy, term.getVariable());
+        assertEquals(2, linear.size());
+        Iterator<Term> iter = linear.iterator();
+        while (iter.hasNext()) {
+            boolean found = false;
+            Term t = iter.next();
+            for (int i = 0; i < coef.length; i++) {
+                found |= t.getVariable().equals(var[i]) && t.getCoefficient().doubleValue() == coef[i];
+            }
+            assertTrue(found);
+        }
 
         // Set empty objective
         lp.setObjectiveLinear(lp.createLinear());
