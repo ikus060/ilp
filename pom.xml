@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.patrikdufresne.ilp</groupId>
 	<artifactId>com.patrikdufresne.ilp-parent</artifactId>
-	<version>0.13-SNAPSHOT</version>
+	<version>0.13</version>
 	<packaging>pom</packaging>
 	<name>com.patrikdufresne.ilp-parent</name>
 	<!-- Define repo -->
@@ -27,7 +27,8 @@
 	</distributionManagement>
 	<scm>
 		<developerConnection>scm:git:http://git.patrikdufresne.com/ilp.git</developerConnection>
-	</scm>
+	  <tag>com.patrikdufresne.ilp-parent-0.13</tag>
+  </scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
