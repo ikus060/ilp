@@ -62,9 +62,9 @@ public class CbcSolver implements Solver {
         case ILPLogger.WARNING:
             return 0;
         case ILPLogger.ERROR:
+        default:
             return 0;
         }
-        return 0;
     }
 
     public CbcSolver() {
@@ -186,7 +186,7 @@ public class CbcSolver implements Solver {
         // Make of copy of the original Lp to avoid side effect when solving the problem.
         cbclp.cbcModel = cbc4j.newCbcModel(cbclp.lp);
         cbc4j.callCbc0(cbclp.cbcModel);
-        int val = cbc4j.callCbc1(args.length, args, cbclp.cbcModel);
+        cbc4j.callCbc1(args.length, args, cbclp.cbcModel);
 
         // Print the total time took to run CBC.
         if (traceEnabled) {

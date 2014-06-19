@@ -52,4 +52,10 @@ public interface Linear extends Iterable<Term> {
      */
     int size();
 
+    /**
+     * Returns true if the size of the linear is 0
+     * 
+     * @return true if the linear is empty
+     */
+    boolean isEmpty();
 }

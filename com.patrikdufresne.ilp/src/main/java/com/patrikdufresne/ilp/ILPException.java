@@ -112,8 +112,11 @@ public class ILPException extends RuntimeException {
             return "No more handles"; //$NON-NLS-1$
         case ERROR_RESOURCE_DISPOSED:
             return "Resource is disposed"; //$NON-NLS-1$
+        case ERROR_DUPLICATE_NAME:
+            return "Name already exist"; //$NON-NLS-1$
+        default:
+            return "Unknown error"; //$NON-NLS-1$
         }
-        return "Unknown error"; //$NON-NLS-1$
     }
 
 }

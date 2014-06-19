@@ -34,7 +34,7 @@ public abstract class AbstractLinearProblem implements LinearProblem {
      *            the linear
      */
     public static void checkLinear(Linear linear) {
-        if (linear == null || linear.size() == 0) {
+        if (linear == null || linear.isEmpty()) {
             return;
         }
         for (Term term : linear) {

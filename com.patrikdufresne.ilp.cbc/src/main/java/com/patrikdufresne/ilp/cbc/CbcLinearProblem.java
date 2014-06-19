@@ -50,7 +50,7 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
      */
     private List<CbcConstraint> constraints;
 
-    double INFINITY;
+    final double infinity;
 
     /**
      * Reference to the
@@ -76,7 +76,7 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
     CbcLinearProblem() {
         // Create a new lp
         this.lp = cbc4j.newOsiClpSolverInterface();
-        this.INFINITY = cbc4j.getInfinity(this.lp);
+        this.infinity = cbc4j.getInfinity(this.lp);
     }
 
     /**
@@ -96,7 +96,7 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
         // Create a new column using CBC API.
         var.parent = this;
         var.col = cbc4j.getNumCols(this.lp);
-        cbc4j.addCol(this.lp, 0, new int[0], new double[0], -this.INFINITY, this.INFINITY, 0);
+        cbc4j.addCol(this.lp, 0, new int[0], new double[0], -this.infinity, this.infinity, 0);
         cbc4j.setColName(this.lp, var.col, name);
         this.status = Status.UNKNOWN;
         if (var.col != this.variables.size()) {
@@ -159,8 +159,8 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
             columns = new int[0];
             coefs = new double[0];
         }
-        cbc4j.addRow(this.lp, columns.length, columns, coefs, lowerBound != null ? lowerBound.doubleValue() : -this.INFINITY, upperBound != null ? upperBound
-                .doubleValue() : this.INFINITY);
+        cbc4j.addRow(this.lp, columns.length, columns, coefs, lowerBound != null ? lowerBound.doubleValue() : -this.infinity, upperBound != null ? upperBound
+                .doubleValue() : this.infinity);
         this.status = Status.UNKNOWN;
         if (constraint.row != this.constraints.size()) {
             throw new RuntimeException("CbcConstraint.row is not set properly."); //$NON-NLS-1$
@@ -317,7 +317,7 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
                 linear.add(createTerm(coefs[col], getCol(col)));
             }
         }
-        if (linear.size() == 0) {
+        if (linear.isEmpty()) {
             return null;
         }
         return linear;
@@ -384,11 +384,11 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
             throw new RuntimeException("CbcVariable not in the variable list."); //$NON-NLS-1$
         }
 
-        String name = var.getName();
+        String varName = var.getName();
         cbc4j.deleteCols(this.lp, 1, new int[] { var.col });
         this.status = Status.UNKNOWN;
         this.variables.remove(index);
-        this.variableNames.remove(name);
+        this.variableNames.remove(varName);
 
         var.col = 0;
         var.parent = null;
@@ -405,11 +405,11 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
         if (this.constraints == null || (index = this.constraints.indexOf(constraint)) < 0) {
             throw new RuntimeException("CbcConstraint not in the constraint list."); //$NON-NLS-1$
         }
-        String name = constraint.getName();
+        String constName = constraint.getName();
         cbc4j.deleteRows(this.lp, 1, new int[] { constraint.row });
         this.status = Status.UNKNOWN;
         this.constraints.remove(index);
-        this.constraintNames.remove(name);
+        this.constraintNames.remove(constName);
         constraint.row = 0;
         constraint.parent = null;
         for (; index < this.constraints.size(); index++) {

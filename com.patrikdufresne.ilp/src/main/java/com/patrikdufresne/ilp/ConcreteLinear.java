@@ -31,7 +31,7 @@ public class ConcreteLinear implements Linear {
 
     @Override
     public String toString() {
-        if (this.terms == null || this.terms.size() == 0) {
+        if (this.terms == null || this.terms.isEmpty()) {
             return "[]"; //$NON-NLS-1$
         }
 
@@ -51,7 +51,7 @@ public class ConcreteLinear implements Linear {
     @Override
     public Iterator<Term> iterator() {
         if (this.terms == null) {
-            return Collections.EMPTY_LIST.iterator();
+            return Collections.emptyListIterator();
         }
         return this.terms.iterator();
     }
@@ -106,6 +106,11 @@ public class ConcreteLinear implements Linear {
             if (other.terms != null) return false;
         } else if (!this.terms.equals(other.terms)) return false;
         return true;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.size() == 0;
     }
 
 }

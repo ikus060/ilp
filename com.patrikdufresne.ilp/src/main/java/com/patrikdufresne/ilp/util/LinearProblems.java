@@ -48,8 +48,6 @@ public class LinearProblems {
             buf.append("="); //$NON-NLS-1$
             buf.append(lp.getObjectiveValue());
             buf.append("\r\n"); //$NON-NLS-1$
-        } else {
-
         }
         // Print variables
         for (Variable var : lp.getVariables()) {

@@ -74,7 +74,7 @@ public class CbcVariable implements Variable {
     public Double getLowerBound() {
         checkVariable();
         double value = cbc4j.getColLower(this.parent.lp, this.col);
-        if (value == -this.parent.INFINITY) {
+        if (value == -this.parent.infinity) {
             return null;
         }
         return Double.valueOf(value);
@@ -103,7 +103,7 @@ public class CbcVariable implements Variable {
     public Double getUpperBound() {
         checkVariable();
         double value = cbc4j.getColUpper(this.parent.lp, this.col);
-        if (value == this.parent.INFINITY) {
+        if (value == this.parent.infinity) {
             return null;
         }
         return Double.valueOf(value);
@@ -133,7 +133,7 @@ public class CbcVariable implements Variable {
     @Override
     public void setLowerBound(Number lb) {
         checkVariable();
-        cbc4j.setColLower(this.parent.lp, this.col, lb != null ? lb.doubleValue() : -this.parent.INFINITY);
+        cbc4j.setColLower(this.parent.lp, this.col, lb != null ? lb.doubleValue() : -this.parent.infinity);
         this.parent.status = Status.UNKNOWN;
     }
 
@@ -163,7 +163,7 @@ public class CbcVariable implements Variable {
     @Override
     public void setUpperBound(Number ub) {
         checkVariable();
-        cbc4j.setColUpper(this.parent.lp, this.col, ub != null ? ub.doubleValue() : this.parent.INFINITY);
+        cbc4j.setColUpper(this.parent.lp, this.col, ub != null ? ub.doubleValue() : this.parent.infinity);
         this.parent.status = Status.UNKNOWN;
     }
 
