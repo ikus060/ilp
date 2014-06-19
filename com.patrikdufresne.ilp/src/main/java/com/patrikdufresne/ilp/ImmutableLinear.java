@@ -88,4 +88,9 @@ public class ImmutableLinear implements Linear {
         return this.terms.size();
     }
 
+    @Override
+    public boolean isEmpty() {
+        return this.size() == 0;
+    }
+
 }

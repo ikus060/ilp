@@ -100,7 +100,7 @@ public class CbcConstraint implements Constraint {
     public Number getLowerBound() {
         checkConstraint();
         double value = cbc4j.getRowLower(this.parent.lp, this.row);
-        if (value == -this.parent.INFINITY) {
+        if (value == -this.parent.infinity) {
             return null;
         }
         return Double.valueOf(value);
@@ -122,7 +122,7 @@ public class CbcConstraint implements Constraint {
     public Number getUpperBound() {
         checkConstraint();
         double value = cbc4j.getRowUpper(this.parent.lp, this.row);
-        if (value == this.parent.INFINITY) {
+        if (value == this.parent.infinity) {
             return null;
         }
         return Double.valueOf(value);
@@ -143,7 +143,7 @@ public class CbcConstraint implements Constraint {
 
     @Override
     public boolean isEmpty() {
-        return getLinear().size() == 0;
+        return getLinear().isEmpty();
     }
 
     @Override
@@ -172,7 +172,7 @@ public class CbcConstraint implements Constraint {
     @Override
     public void setLowerBound(Number lb) {
         checkConstraint();
-        cbc4j.setRowLower(this.parent.lp, this.row, lb != null ? lb.doubleValue() : -this.parent.INFINITY);
+        cbc4j.setRowLower(this.parent.lp, this.row, lb != null ? lb.doubleValue() : -this.parent.infinity);
         this.parent.status = Status.UNKNOWN;
     }
 
@@ -190,7 +190,7 @@ public class CbcConstraint implements Constraint {
     @Override
     public void setUpperBound(Number ub) {
         checkConstraint();
-        cbc4j.setRowUpper(this.parent.lp, this.row, ub != null ? ub.doubleValue() : this.parent.INFINITY);
+        cbc4j.setRowUpper(this.parent.lp, this.row, ub != null ? ub.doubleValue() : this.parent.infinity);
         this.parent.status = Status.UNKNOWN;
     }
 
