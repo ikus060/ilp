@@ -132,7 +132,7 @@ public class GLPKConstraint implements Constraint {
      * Return the row's lower bound or null if unbounded.
      */
     @Override
-    public Number getLowerBound() {
+    public Double getLowerBound() {
         checkConstraint();
 
         double value = GLPK.glp_get_row_lb(this.parent.lp, this.row);
@@ -157,7 +157,7 @@ public class GLPKConstraint implements Constraint {
      * Return the row's upper bound or null if unbounded.
      */
     @Override
-    public Number getUpperBound() {
+    public Double getUpperBound() {
         checkConstraint();
         double value = GLPK.glp_get_row_ub(this.parent.lp, this.row);
 
@@ -168,7 +168,7 @@ public class GLPKConstraint implements Constraint {
     }
 
     @Override
-    public Number getValue() {
+    public Double getValue() {
         checkConstraint();
         this.parent.checkSolution();
         if (this.parent.isMIP()) {
@@ -223,7 +223,7 @@ public class GLPKConstraint implements Constraint {
     public void setLowerBound(Number lb) {
         checkConstraint();
 
-        Number ub = getUpperBound();
+        Double ub = getUpperBound();
         int type = GLPKLinearProblem.boundedType(lb, ub);
 
         GLPK.glp_set_row_bnds(this.parent.lp, this.row, type, lb != null ? lb.doubleValue() : 0, ub != null ? ub.doubleValue() : 0);
@@ -251,7 +251,7 @@ public class GLPKConstraint implements Constraint {
     public void setUpperBound(Number ub) {
         checkConstraint();
 
-        Number lb = getLowerBound();
+        Double lb = getLowerBound();
         int type = GLPKLinearProblem.boundedType(lb, ub);
 
         GLPK.glp_set_row_bnds(this.parent.lp, this.row, type, lb != null ? lb.doubleValue() : 0, ub != null ? ub.doubleValue() : 0);

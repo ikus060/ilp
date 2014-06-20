@@ -35,7 +35,7 @@ public interface Constraint {
      * 
      * @return the lower bound or null if not bounded
      */
-    Number getLowerBound();
+    Double getLowerBound();
 
     /**
      * Returns the constraint name.
@@ -56,14 +56,14 @@ public interface Constraint {
      * @throws ILPException
      *             if the solution is not available.
      */
-    Number getValue();
+    Double getValue();
 
     /**
      * Returns the upper bound.
      * 
      * @return the upper bound or null if unbounded
      */
-    Number getUpperBound();
+    Double getUpperBound();
 
     /**
      * Sets the constraint linear expression.

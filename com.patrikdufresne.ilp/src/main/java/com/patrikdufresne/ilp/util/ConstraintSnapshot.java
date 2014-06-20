@@ -92,7 +92,7 @@ public class ConstraintSnapshot {
      * 
      * @return the lower bound value.
      */
-    public Number getLower() {
+    public Double getLower() {
         return this.bound.getLower();
     }
 
@@ -110,7 +110,7 @@ public class ConstraintSnapshot {
      * 
      * @return the upper bound value.
      */
-    public Number getUpper() {
+    public Double getUpper() {
         return this.bound.getUpper();
     }
 

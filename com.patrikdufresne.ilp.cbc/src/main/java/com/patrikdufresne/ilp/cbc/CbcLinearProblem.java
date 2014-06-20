@@ -333,7 +333,7 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
      * This implementation return the objective value.
      */
     @Override
-    public Number getObjectiveValue() {
+    public Double getObjectiveValue() {
         checkProblem();
         checkSolution();
         return cbc4j.getObjValue(this.cbcModel);

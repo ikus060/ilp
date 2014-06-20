@@ -80,7 +80,7 @@ public class BoundSnapshot extends HashMap<Variable, Bound> {
      * @return the lower bound value for this variable, also return null if this
      *         snapshot doesn't contain the variable specified.
      */
-    public Number getLower(Variable var) {
+    public Double getLower(Variable var) {
         Bound bound = get(var);
         if (bound == null) {
             return null;
@@ -96,7 +96,7 @@ public class BoundSnapshot extends HashMap<Variable, Bound> {
      *            the variable
      * @return the value for this variable.
      */
-    public Number getUpper(Variable var) {
+    public Double getUpper(Variable var) {
         Bound bound = get(var);
         if (bound == null) {
             return null;

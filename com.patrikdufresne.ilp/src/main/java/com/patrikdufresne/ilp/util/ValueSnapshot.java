@@ -30,7 +30,7 @@ import com.patrikdufresne.ilp.Variable;
  * @author Patrik Dufresne
  * 
  */
-public class ValueSnapshot extends HashMap<Variable, Number> {
+public class ValueSnapshot extends HashMap<Variable, Double> {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,7 +42,7 @@ public class ValueSnapshot extends HashMap<Variable, Number> {
      * @return the snapshot value
      */
     public static ValueSnapshot create(Collection<? extends Variable> vars) {
-        Map<Variable, Number> snapshot = new HashMap<Variable, Number>(vars.size());
+        Map<Variable, Double> snapshot = new HashMap<Variable, Double>(vars.size());
         for (Variable var : vars) {
             snapshot.put(var, var.getValue());
         }
@@ -54,7 +54,7 @@ public class ValueSnapshot extends HashMap<Variable, Number> {
      * 
      * @param snapshot
      */
-    protected ValueSnapshot(Map<Variable, Number> snapshot) {
+    protected ValueSnapshot(Map<Variable, Double> snapshot) {
         super(snapshot);
     }
 
@@ -64,7 +64,7 @@ public class ValueSnapshot extends HashMap<Variable, Number> {
     }
 
     @Override
-    public Set<Entry<Variable, Number>> entrySet() {
+    public Set<Entry<Variable, Double>> entrySet() {
         return Collections.unmodifiableSet(super.entrySet());
     }
 
@@ -74,22 +74,22 @@ public class ValueSnapshot extends HashMap<Variable, Number> {
     }
 
     @Override
-    public Number put(Variable key, Number value) {
+    public Double put(Variable key, Double value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void putAll(Map<? extends Variable, ? extends Number> m) {
+    public void putAll(Map<? extends Variable, ? extends Double> m) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Number remove(Object key) {
+    public Double remove(Object key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Collection<Number> values() {
+    public Collection<Double> values() {
         return Collections.unmodifiableCollection(super.values());
     }
 

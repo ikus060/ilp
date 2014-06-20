@@ -44,9 +44,9 @@ public class Bound {
         return new Bound(variable.getLowerBound(), variable.getUpperBound());
     }
 
-    private Number lower;
+    private Double lower;
 
-    private Number upper;
+    private Double upper;
 
     /**
      * Create a new bound instance.
@@ -56,7 +56,7 @@ public class Bound {
      * @param upper
      *            the upper bound
      */
-    public Bound(Number lower, Number upper) {
+    public Bound(Double lower, Double upper) {
         this.lower = lower;
         this.upper = upper;
     }
@@ -81,7 +81,7 @@ public class Bound {
      * 
      * @return the lower bound value.
      */
-    public Number getLower() {
+    public Double getLower() {
         return this.lower;
     }
 
@@ -90,7 +90,7 @@ public class Bound {
      * 
      * @return the upper bound value
      */
-    public Number getUpper() {
+    public Double getUpper() {
         return this.upper;
     }
 

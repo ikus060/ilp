@@ -25,7 +25,7 @@ public class ConcreteTerm implements Term {
     /**
      * The coefficient value.
      */
-    private Number coefficient;
+    private Double coefficient;
 
     /**
      * The variable.
@@ -58,7 +58,7 @@ public class ConcreteTerm implements Term {
     }
 
     @Override
-    public Number getCoefficient() {
+    public Double getCoefficient() {
         return this.coefficient;
     }
 
