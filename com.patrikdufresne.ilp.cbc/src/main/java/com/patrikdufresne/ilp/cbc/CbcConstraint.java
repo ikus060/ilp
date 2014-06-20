@@ -97,7 +97,7 @@ public class CbcConstraint implements Constraint {
      * Return the row's lower bound or null if unbounded.
      */
     @Override
-    public Number getLowerBound() {
+    public Double getLowerBound() {
         checkConstraint();
         double value = cbc4j.getRowLower(this.parent.lp, this.row);
         if (value == -this.parent.infinity) {
@@ -119,7 +119,7 @@ public class CbcConstraint implements Constraint {
      * Return the row's upper bound or null if unbounded.
      */
     @Override
-    public Number getUpperBound() {
+    public Double getUpperBound() {
         checkConstraint();
         double value = cbc4j.getRowUpper(this.parent.lp, this.row);
         if (value == this.parent.infinity) {
@@ -129,7 +129,7 @@ public class CbcConstraint implements Constraint {
     }
 
     @Override
-    public Number getValue() {
+    public Double getValue() {
         checkConstraint();
         this.parent.checkSolution();
         // TODO implement this method.

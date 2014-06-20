@@ -35,7 +35,7 @@ public interface Term {
      * 
      * @return the value
      */
-    public Number getCoefficient();
+    public Double getCoefficient();
 
     @Override
     public int hashCode();

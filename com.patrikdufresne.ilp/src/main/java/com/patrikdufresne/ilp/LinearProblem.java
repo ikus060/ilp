@@ -343,7 +343,7 @@ public interface LinearProblem {
      * 
      * @return the objective value.
      */
-    Number getObjectiveValue();
+    Double getObjectiveValue();
 
     /**
      * Returns the solution status of the linear problem. This value is only

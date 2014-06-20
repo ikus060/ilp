@@ -154,7 +154,7 @@ public class GLPKVariable implements Variable {
     public void setLowerBound(Number lb) {
         checkVariable();
 
-        Number ub = getUpperBound();
+        Double ub = getUpperBound();
         int type = GLPKLinearProblem.boundedType(lb, ub);
 
         GLPK.glp_set_col_bnds(this.parent.lp, this.col, type, lb != null ? lb.doubleValue() : 0, ub != null ? ub.doubleValue() : 0);
@@ -212,7 +212,7 @@ public class GLPKVariable implements Variable {
     public void setUpperBound(Number ub) {
         checkVariable();
 
-        Number lb = getLowerBound();
+        Double lb = getLowerBound();
         int type = GLPKLinearProblem.boundedType(lb, ub);
 
         GLPK.glp_set_col_bnds(this.parent.lp, this.col, type, lb != null ? lb.doubleValue() : 0, ub != null ? ub.doubleValue() : 0);

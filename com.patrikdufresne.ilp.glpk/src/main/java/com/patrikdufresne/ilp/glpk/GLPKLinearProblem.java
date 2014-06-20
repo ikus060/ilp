@@ -354,7 +354,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
      * This implementation return the objective value.
      */
     @Override
-    public Number getObjectiveValue() {
+    public Double getObjectiveValue() {
         checkProblem();
 
         checkSolution();
