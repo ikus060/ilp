@@ -15,6 +15,8 @@
  */
 package com.patrikdufresne.ilp.cbc;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import com.patrikdufresne.cbc4j.cbc4j;
 import com.patrikdufresne.ilp.ILPException;
 import com.patrikdufresne.ilp.Status;
@@ -26,6 +28,11 @@ public class CbcVariable implements Variable {
      * The col index.
      */
     int col;
+
+    /**
+     * The scale for the returned value
+     */
+    private static final int scale = 9;
 
     /**
      * Reference to the problem.
@@ -116,7 +123,9 @@ public class CbcVariable implements Variable {
     public Double getValue() {
         checkVariable();
         this.parent.checkSolution();
-        return Double.valueOf(cbc4j.bestSolution(this.parent.cbcModel, this.col));
+        // Implemented to solve the problems where the value was not returning an rounded number for close values value
+        // ex: 0.9999999999988346 instead of 1.0
+        return new BigDecimal(cbc4j.bestSolution(this.parent.cbcModel, this.col)).setScale(this.scale, RoundingMode.HALF_EVEN).doubleValue();
     }
 
     /**
