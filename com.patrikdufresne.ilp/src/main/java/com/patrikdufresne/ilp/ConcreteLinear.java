@@ -15,6 +15,7 @@
  */
 package com.patrikdufresne.ilp;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -51,7 +52,7 @@ public class ConcreteLinear implements Linear {
     @Override
     public Iterator<Term> iterator() {
         if (this.terms == null) {
-            return Collections.emptyListIterator();
+            return Collections.EMPTY_LIST.iterator();
         }
         return this.terms.iterator();
     }
