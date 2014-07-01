@@ -440,7 +440,6 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         SWIGTYPE_p_int cols = GLPK.new_intArray(2);
         GLPK.intArray_setitem(cols, 1, var.col);
         GLPK.glp_del_cols(this.lp, 1, cols);
-        this.status = null;
 
         this.variables.remove(index);
         this.variableNames.remove(name);
@@ -465,7 +464,6 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         SWIGTYPE_p_int rows = GLPK.new_intArray(2);
         GLPK.intArray_setitem(rows, 1, constraint.row);
         GLPK.glp_del_rows(this.lp, 1, rows);
-        this.status = null;
 
         this.constraints.remove(index);
         this.constraintNames.remove(name);
