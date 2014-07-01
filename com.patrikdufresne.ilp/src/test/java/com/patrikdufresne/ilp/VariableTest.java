@@ -143,6 +143,8 @@ public abstract class VariableTest {
     }
 
     /**
+     * Check if getting a value after some modification to the problem still work.
+     * 
      * <pre>
      * Maximize y
      *     subject to
@@ -153,7 +155,7 @@ public abstract class VariableTest {
      *       0.0 <= y  integer
      * </pre>
      */
-    @Test(expected = ILPException.class)
+    @Test
     public void testGetValue_AfterDispose() {
 
         // Create the model
@@ -163,8 +165,8 @@ public abstract class VariableTest {
         linear.add(lp.createTerm(1, y));
         lp.setObjectiveLinear(linear);
         lp.setObjectiveDirection(LinearProblem.MAXIMIZE);
-        Constraint constraint1 = lp.addConstraint("-2x + 3y <= 6", new int[] { -2, 3 }, new Variable[] { x, y }, null, 6);
-        Constraint constraint2 = lp.addConstraint("2x + 3y <= 12", new int[] { 2, 3 }, new Variable[] { x, y }, null, 12);
+        Constraint constraint1 = lp.addConstraint("-2x + 6y <= 6", new int[] { -2, 6 }, new Variable[] { x, y }, null, 6);
+        Constraint constraint2 = lp.addConstraint("2x + 6y <= 12", new int[] { 2, 6 }, new Variable[] { x, y }, null, 12);
 
         SolverOption option = solver.createSolverOption();
 
@@ -173,7 +175,7 @@ public abstract class VariableTest {
         // Solve the model
         assertTrue(solver.solve(lp, option));
         assertEquals(Status.OPTIMAL, lp.getStatus());
-        assertEquals(2.0, lp.getObjectiveValue().doubleValue(), 0);
+        assertEquals(1.0, lp.getObjectiveValue().doubleValue(), 0);
 
         double xval = x.getValue().doubleValue();
         double yval = y.getValue().doubleValue();
@@ -181,13 +183,18 @@ public abstract class VariableTest {
         assertTrue(-2 * xval + 3 * yval <= 6);
         assertTrue(2 * xval + 3 * yval <= 12);
 
-        assertEquals(2, y.getValue().intValue());
+        assertTrue(x.getValue().equals(2.0d) || x.getValue().equals(3.0d));
+        assertEquals(1, y.getValue().doubleValue(), 0.0001);
 
-        // Dispose a variable
-        x.dispose();
+        // Dispose constraints
         constraint1.dispose();
         constraint2.dispose();
-        y.getValue().intValue();
+        // Check if value of 'x' changed.
+        assertTrue(x.getValue().equals(2.0d) || x.getValue().equals(3.0d));
+        // Dispose variables
+        x.dispose();
+        // Check if the value of 'y' changed
+        assertEquals(1, y.getValue().doubleValue(), 0.0001);
 
     }
 

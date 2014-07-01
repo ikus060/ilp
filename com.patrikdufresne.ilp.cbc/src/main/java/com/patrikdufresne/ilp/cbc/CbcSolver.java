@@ -167,10 +167,9 @@ public class CbcSolver implements Solver {
 
         // Release the previous solution.
         cbclp.status = Status.UNKNOWN;
-        if (cbclp.cbcModel != null) {
-            cbc4j.deleteCbcModel(cbclp.cbcModel);
-            cbclp.cbcModel = null;
-        }
+        cbclp.bestSolution = null;
+        cbclp.objValue = null;
+        
         // Flush java output.
         System.out.flush();
 
@@ -184,17 +183,25 @@ public class CbcSolver implements Solver {
 
         /* Call CBC solver. */
         // Make of copy of the original Lp to avoid side effect when solving the problem.
-        cbclp.cbcModel = cbc4j.newCbcModel(cbclp.lp);
-        cbc4j.callCbc0(cbclp.cbcModel);
-        cbc4j.callCbc1(args.length, args, cbclp.cbcModel);
+        SWIGTYPE_p_CbcModel cbcModel = cbc4j.newCbcModel(cbclp.lp);
+        try {
+            cbc4j.callCbc0(cbcModel);
+            cbc4j.callCbc1(args.length, args, cbcModel);
 
-        // Print the total time took to run CBC.
-        if (traceEnabled) {
-            ILPPolicy.getLog().log(ILPLogger.TRACE, "cbc solver took " + (System.currentTimeMillis() - start) + " ms");
+            // Print the total time took to run CBC.
+            if (traceEnabled) {
+                ILPPolicy.getLog().log(ILPLogger.TRACE, "cbc solver took " + (System.currentTimeMillis() - start) + " ms");
+            }
+
+            // Check the status, retrieve the best solution, get the objective value.
+            cbclp.status = checkStatus(cbcModel);
+            cbclp.bestSolution = cbc4j.bestSolution(cbcModel);
+            cbclp.objValue = cbc4j.getObjValue(cbcModel);
+
+        } finally {
+            // Release the cbcModel
+            cbc4j.deleteCbcModel(cbcModel);
         }
-
-        // Check the status.
-        cbclp.status = checkStatus(cbclp.cbcModel);
 
         return Status.FEASIBLE.equals(cbclp.status) || Status.OPTIMAL.equals(cbclp.status);
     }

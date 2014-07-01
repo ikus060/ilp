@@ -125,7 +125,7 @@ public class CbcVariable implements Variable {
         this.parent.checkSolution();
         // Implemented to solve the problems where the value was not returning an rounded number for close values value
         // ex: 0.9999999999988346 instead of 1.0
-        return new BigDecimal(cbc4j.bestSolution(this.parent.cbcModel, this.col)).setScale(SCALE, RoundingMode.HALF_EVEN).doubleValue();
+        return new BigDecimal(this.parent.bestSolution[this.col]).setScale(SCALE, RoundingMode.HALF_EVEN).doubleValue();
     }
 
     /**

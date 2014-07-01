@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.patrikdufresne.cbc4j.SWIGTYPE_p_CbcModel;
 import com.patrikdufresne.cbc4j.SWIGTYPE_p_OsiClpSolverInterface;
 import com.patrikdufresne.cbc4j.cbc4j;
 import com.patrikdufresne.ilp.AbstractLinearProblem;
@@ -40,9 +39,13 @@ import com.patrikdufresne.ilp.Variable;
 public class CbcLinearProblem extends AbstractLinearProblem implements IPersistentLinearProblem {
 
     /**
-     * Reference to the previously solved cbcModel. Kept as reference to be deleted.
+     * Used to keep the best solution previously computed by the solver.
      */
-    SWIGTYPE_p_CbcModel cbcModel;
+    double[] bestSolution;
+    /**
+     * The objective value.
+     */
+    Double objValue;
 
     private Set<String> constraintNames;
     /**
@@ -98,7 +101,6 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
         var.col = cbc4j.getNumCols(this.lp);
         cbc4j.addCol(this.lp, 0, new int[0], new double[0], -this.infinity, this.infinity, 0);
         cbc4j.setColName(this.lp, var.col, name);
-        this.status = Status.UNKNOWN;
         if (var.col != this.variables.size()) {
             throw new RuntimeException("CbcVariable.col is not set properly."); //$NON-NLS-1$
         }
@@ -161,7 +163,6 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
         }
         cbc4j.addRow(this.lp, columns.length, columns, coefs, lowerBound != null ? lowerBound.doubleValue() : -this.infinity, upperBound != null ? upperBound
                 .doubleValue() : this.infinity);
-        this.status = Status.UNKNOWN;
         if (constraint.row != this.constraints.size()) {
             throw new RuntimeException("CbcConstraint.row is not set properly."); //$NON-NLS-1$
         }
@@ -220,7 +221,7 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
         default:
             throw new ILPException("solution not available"); //$NON-NLS-1$
         }
-        if (this.cbcModel == null) {
+        if (this.bestSolution == null) {
             throw new ILPException("solution not available"); //$NON-NLS-1$
         }
     }
@@ -247,11 +248,7 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
             cbc4j.deleteOsiClpSolverInterface(this.lp);
         }
         this.lp = null;
-        // Free the solution.
-        if (this.cbcModel != null) {
-            cbc4j.deleteCbcModel(this.cbcModel);
-        }
-        this.cbcModel = null;
+        this.bestSolution = null;
     }
 
     /**
@@ -336,7 +333,7 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
     public Double getObjectiveValue() {
         checkProblem();
         checkSolution();
-        return cbc4j.getObjValue(this.cbcModel);
+        return this.objValue;
     }
 
     /**
@@ -374,7 +371,7 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
     }
 
     /**
-     * Remove the column fr om the linear problem.
+     * Remove the column from the linear problem.
      * 
      * @param col
      */
@@ -386,12 +383,19 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
 
         String varName = var.getName();
         cbc4j.deleteCols(this.lp, 1, new int[] { var.col });
-        this.status = Status.UNKNOWN;
         this.variables.remove(index);
         this.variableNames.remove(varName);
 
         var.col = 0;
         var.parent = null;
+
+        // Adjust the bestSolution
+        if (this.bestSolution != null && this.bestSolution.length > 1) {
+            double[] newSolution = new double[this.bestSolution.length - 1];
+            System.arraycopy(bestSolution, 0, newSolution, 0, index);
+            System.arraycopy(bestSolution, index + 1, newSolution, index, bestSolution.length - index - 1);
+            this.bestSolution = newSolution;
+        }
 
         for (; index < this.variables.size(); index++) {
             CbcVariable sub = this.variables.get(index);
@@ -407,7 +411,6 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
         }
         String constName = constraint.getName();
         cbc4j.deleteRows(this.lp, 1, new int[] { constraint.row });
-        this.status = Status.UNKNOWN;
         this.constraints.remove(index);
         this.constraintNames.remove(constName);
         constraint.row = 0;
@@ -445,11 +448,9 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
         switch (direction) {
         case MAXIMIZE:
             cbc4j.setObjSense(this.lp, -1.0);
-            this.status = Status.UNKNOWN;
             break;
         case MINIMIZE:
             cbc4j.setObjSense(this.lp, 1.0);
-            this.status = Status.UNKNOWN;
             break;
         default:
             throw new IllegalArgumentException();
