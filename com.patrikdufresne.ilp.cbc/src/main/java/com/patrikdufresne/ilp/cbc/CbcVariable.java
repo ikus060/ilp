@@ -17,9 +17,9 @@ package com.patrikdufresne.ilp.cbc;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import com.patrikdufresne.cbc4j.cbc4j;
 import com.patrikdufresne.ilp.ILPException;
-import com.patrikdufresne.ilp.Status;
 import com.patrikdufresne.ilp.VarType;
 import com.patrikdufresne.ilp.Variable;
 
@@ -143,7 +143,6 @@ public class CbcVariable implements Variable {
     public void setLowerBound(Number lb) {
         checkVariable();
         cbc4j.setColLower(this.parent.lp, this.col, lb != null ? lb.doubleValue() : -this.parent.infinity);
-        this.parent.status = Status.UNKNOWN;
     }
 
     /**
@@ -156,13 +155,10 @@ public class CbcVariable implements Variable {
         if (type.equals(VarType.BOOL)) {
             cbc4j.setInteger(this.parent.lp, this.col);
             cbc4j.setColBounds(this.parent.lp, this.col, 0, 1);
-            this.parent.status = Status.UNKNOWN;
         } else if (type.equals(VarType.INTEGER)) {
             cbc4j.setInteger(this.parent.lp, this.col);
-            this.parent.status = Status.UNKNOWN;
         } else if (type.equals(VarType.REAL)) {
             cbc4j.setContinuous(this.parent.lp, this.col);
-            this.parent.status = Status.UNKNOWN;
         }
     }
 
@@ -173,7 +169,6 @@ public class CbcVariable implements Variable {
     public void setUpperBound(Number ub) {
         checkVariable();
         cbc4j.setColUpper(this.parent.lp, this.col, ub != null ? ub.doubleValue() : this.parent.infinity);
-        this.parent.status = Status.UNKNOWN;
     }
 
     @Override

@@ -109,7 +109,7 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
     /**
      * The status of the problem. This value is sets the UNKNOWN when any variable or constraints is changed.
      */
-    Status status;
+    Status status = Status.UNKNOWN;;
 
     /**
      * Need to keep reference on every variable (col).
@@ -171,7 +171,6 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         // Create a new column using GLPK API.
         var.parent = this;
         var.col = GLPK.glp_add_cols(this.lp, 1);
-        this.status = Status.UNKNOWN;
 
         if (var.col != this.variables.size() + 1) {
             throw new RuntimeException("GLPKVariable.col is not set properly."); //$NON-NLS-1$
@@ -204,7 +203,6 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
 
         constraint.parent = this;
         constraint.row = GLPK.glp_add_rows(this.lp, 1);
-        this.status = Status.UNKNOWN;
 
         if (constraint.row != this.constraints.size() + 1) {
             throw new RuntimeException("GLPKConstraint.row is not set properly."); //$NON-NLS-1$
@@ -518,11 +516,9 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         switch (direction) {
         case MAXIMIZE:
             GLPK.glp_set_obj_dir(this.lp, GLPKConstants.GLP_MAX);
-            this.status = Status.UNKNOWN;
             break;
         case MINIMIZE:
             GLPK.glp_set_obj_dir(this.lp, GLPKConstants.GLP_MIN);
-            this.status = Status.UNKNOWN;
             break;
         default:
             throw new IllegalArgumentException();
@@ -543,7 +539,6 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
                 GLPK.glp_set_obj_coef(this.lp, i, 0);
             }
         }
-        this.status = Status.UNKNOWN;
 
         if (objective == null || objective.size() == 0) {
             return;

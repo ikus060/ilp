@@ -158,7 +158,6 @@ public class GLPKVariable implements Variable {
         int type = GLPKLinearProblem.boundedType(lb, ub);
 
         GLPK.glp_set_col_bnds(this.parent.lp, this.col, type, lb != null ? lb.doubleValue() : 0, ub != null ? ub.doubleValue() : 0);
-        this.parent.status = Status.UNKNOWN;
     }
 
     /**
@@ -188,19 +187,16 @@ public class GLPKVariable implements Variable {
 
             GLPK.glp_set_col_kind(this.parent.lp, this.col, GLPKConstants.GLP_IV);
             GLPK.glp_set_col_bnds(this.parent.lp, this.col, GLPKConstants.GLP_DB, 0, 1);
-            this.parent.status = Status.UNKNOWN;
 
         } else if (type.equals(VarType.INTEGER)) {
 
             GLPK.glp_set_col_kind(this.parent.lp, this.col, GLPKConstants.GLP_IV);
-            this.parent.status = Status.UNKNOWN;
 
         } else if (type.equals(VarType.REAL)) {
 
             GLPK.glp_set_col_kind(this.parent.lp, this.col, GLPKConstants.GLP_CV);
 
             this.parent.mip = null;
-            this.parent.status = Status.UNKNOWN;
 
         }
     }
@@ -216,7 +212,6 @@ public class GLPKVariable implements Variable {
         int type = GLPKLinearProblem.boundedType(lb, ub);
 
         GLPK.glp_set_col_bnds(this.parent.lp, this.col, type, lb != null ? lb.doubleValue() : 0, ub != null ? ub.doubleValue() : 0);
-        this.parent.status = Status.UNKNOWN;
     }
 
     @Override
