@@ -166,7 +166,6 @@ public class CbcSolver implements Solver {
         }
 
         // Release the previous solution.
-        cbclp.status = Status.UNKNOWN;
         cbclp.bestSolution = null;
         cbclp.objValue = null;
         

@@ -216,7 +216,6 @@ public class GLPKConstraint implements Constraint {
 
         // Sets the row matrix
         GLPK.glp_set_mat_row(this.parent.lp, this.row, size, cols, coefs);
-        this.parent.status = Status.UNKNOWN;
     }
 
     @Override
@@ -227,8 +226,6 @@ public class GLPKConstraint implements Constraint {
         int type = GLPKLinearProblem.boundedType(lb, ub);
 
         GLPK.glp_set_row_bnds(this.parent.lp, this.row, type, lb != null ? lb.doubleValue() : 0, ub != null ? ub.doubleValue() : 0);
-        this.parent.status = Status.UNKNOWN;
-
     }
 
     /**
@@ -255,7 +252,6 @@ public class GLPKConstraint implements Constraint {
         int type = GLPKLinearProblem.boundedType(lb, ub);
 
         GLPK.glp_set_row_bnds(this.parent.lp, this.row, type, lb != null ? lb.doubleValue() : 0, ub != null ? ub.doubleValue() : 0);
-        this.parent.status = Status.UNKNOWN;
     }
 
     @Override

@@ -155,7 +155,7 @@ public abstract class LinearProblemTest {
     }
 
     /**
-     * Check if the status of the linear problem is unknown after touching the bound of a variable.
+     * Check if the status of the linear problem is unchanged after touching the bound of a variable.
      */
     @Test
     public void testGetStatus_AfterTouchingVariable() {
@@ -178,10 +178,16 @@ public abstract class LinearProblemTest {
 
         // Touch a variable.
         x.setLowerBound(null);
+        x.setUpperBound(null);
 
-        // Check if the state is unknown.
-        assertEquals(Status.UNKNOWN, lp.getStatus());
+        // Check if the state is unchanged.
+        assertEquals(Status.OPTIMAL, lp.getStatus());
 
+        // Dispose a variable
+        y.dispose();
+
+        // Check if the state is unchanged.
+        assertEquals(Status.OPTIMAL, lp.getStatus());
     }
 
 }

@@ -342,6 +342,9 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
     @Override
     public Status getStatus() {
         checkProblem();
+        if (this.status == null) {
+            return Status.UNKNOWN;
+        }
         return this.status;
     }
 

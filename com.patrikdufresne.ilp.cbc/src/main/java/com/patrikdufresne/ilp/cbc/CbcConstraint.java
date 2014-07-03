@@ -149,7 +149,6 @@ public class CbcConstraint implements Constraint {
     @Override
     public void setLinear(Linear linear) {
         checkConstraint();
-        this.parent.status = Status.UNKNOWN;
         AbstractLinearProblem.checkLinear(linear);
         int[] columns;
         double[] coefs;
@@ -173,7 +172,6 @@ public class CbcConstraint implements Constraint {
     public void setLowerBound(Number lb) {
         checkConstraint();
         cbc4j.setRowLower(this.parent.lp, this.row, lb != null ? lb.doubleValue() : -this.parent.infinity);
-        this.parent.status = Status.UNKNOWN;
     }
 
     /**
@@ -191,7 +189,6 @@ public class CbcConstraint implements Constraint {
     public void setUpperBound(Number ub) {
         checkConstraint();
         cbc4j.setRowUpper(this.parent.lp, this.row, ub != null ? ub.doubleValue() : this.parent.infinity);
-        this.parent.status = Status.UNKNOWN;
     }
 
     @Override
