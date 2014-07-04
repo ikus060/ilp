@@ -25,8 +25,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.patrikdufresne.ilp.util.LinearProblems;
-
 /**
  * 
  * @author Patrik Dufresne
@@ -144,6 +142,7 @@ public abstract class SolverTest {
             assertTrue(solver.solve(lp, option));
 
             assertEquals(Status.OPTIMAL, lp.getStatus());
+            assertTrue(lp.isFeasible());
 
             assertEquals(2, y.getValue().intValue());
 
@@ -191,6 +190,7 @@ public abstract class SolverTest {
 
         // Check results
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertEquals(0, x.getValue().intValue());
         assertEquals(5, y.getValue().intValue());
         assertEquals(60.0, lp.getObjectiveValue().doubleValue(), 0.0001);
@@ -232,6 +232,7 @@ public abstract class SolverTest {
 
         // Check results
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertEquals(0, x.getValue().intValue());
         assertEquals(5, y.getValue().intValue());
         assertEquals(60.0, lp.getObjectiveValue().doubleValue(), 0.0001);
@@ -284,7 +285,7 @@ public abstract class SolverTest {
         lp.setObjectiveDirection(LinearProblem.MINIMIZE);
         lp.addConstraint("x+y>=4", new int[] { 1, 1 }, new Variable[] { x, y }, 4, null);
         lp.addConstraint("-x + y >= -1", new int[] { -1, 1 }, new Variable[] { x, y }, -1, null);
-        System.out.println(LinearProblems.toString(lp));
+        System.out.println(lp.toString());
         if (lp instanceof IPersistentLinearProblem) {
             ((IPersistentLinearProblem) lp).save(new File("coucou.1"));
         }
@@ -294,13 +295,14 @@ public abstract class SolverTest {
 
         // Check the results.
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertTrue(Math.abs(x.getValue() - 2) < 0.0001 || Math.abs(x.getValue() - 3) < 0.0001);
         assertEquals(2.0, y.getValue().doubleValue(), 0.0001);
         assertEquals(2.0, lp.getObjectiveValue().doubleValue(), 0.0001);
 
         // Update the problem by adding constrain
         lp.addConstraint("-x + 2y >= 4", new int[] { -1, 2 }, new Variable[] { x, y }, 4, null);
-        System.out.println(LinearProblems.toString(lp));
+        System.out.println(lp.toString());
         if (lp instanceof IPersistentLinearProblem) {
             ((IPersistentLinearProblem) lp).save(new File("coucou2"));
         }
@@ -310,6 +312,7 @@ public abstract class SolverTest {
 
         // Check the result.
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertTrue(Math.abs(x.getValue() - 1) < 0.0001 || Math.abs(x.getValue() - 2) < 0.0001);
         assertEquals(3.0, y.getValue().doubleValue(), 0.0001);
         assertEquals(3.0, lp.getObjectiveValue().doubleValue(), 0.0001);
@@ -327,6 +330,7 @@ public abstract class SolverTest {
         assertFalse(solver.solve(lp, solver.createSolverOption()));
 
         assertTrue(lp.getStatus() == Status.INFEASIBLE || lp.getStatus() == Status.UNKNOWN);
+        assertFalse(lp.isFeasible());
 
     }
 }

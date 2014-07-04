@@ -25,6 +25,13 @@ import java.util.List;
  * If the model contains integer or boolean variables, the model is referred to
  * as a mixed integer program (MIP). You can query whether the active model is a
  * MIP with the method {@link #isMIP()}.
+ * <p>
+ * After a called to {@link Solver#solve(LinearProblem, SolverOption)}, further information about the solution can be
+ * queried with the method {@link #getStatus()}. The return code of type {@link Status} reports whether the solution is
+ * feasible, bounded, or optimal, or whether the model has been proven to be infeasible or unbounded. See {@link Status}
+ * for more information.
+ * <p>
+ * The methods {@link #isFeasible()} determine whether a primal feasible solution has been found and can be queried.
  * 
  * @author Patrik Dufresne
  * 
@@ -332,13 +339,6 @@ public interface LinearProblem {
     Linear getObjectiveLinear();
 
     /**
-     * Return the objective name.
-     * 
-     * @return
-     */
-    String getObjectiveName();
-
-    /**
      * Returns the objective value. Only valid after solving the problem.
      * 
      * @return the objective value.
@@ -367,6 +367,16 @@ public interface LinearProblem {
      * @return true if the problem is disposed.
      */
     boolean isDisposed();
+
+    /**
+     * Returns <code>true</code> if a primal feasible solution is available. May or may not be proven optimal.
+     * <p>
+     * If false is returned, the solution may still be primal feasible, but the algorithm did not determine the
+     * feasibility before it terminated.
+     * 
+     * @return True if a primal solution is available.
+     */
+    boolean isFeasible();
 
     /**
      * Check if the active model is a MIP.

@@ -175,6 +175,7 @@ public abstract class VariableTest {
         // Solve the model
         assertTrue(solver.solve(lp, option));
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertEquals(1.0, lp.getObjectiveValue().doubleValue(), 0);
 
         double xval = x.getValue().doubleValue();
@@ -220,7 +221,7 @@ public abstract class VariableTest {
         // solve the problem
         assertFalse(solver.solve(lp, solver.createSolverOption()));
         assertTrue(lp.getStatus() == Status.INFEASIBLE || lp.getStatus() == Status.UNKNOWN);
-
+        assertFalse(lp.isFeasible());
         var.getValue();
 
     }

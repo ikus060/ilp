@@ -262,6 +262,20 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
+     * This implementation used the value return by {@link #getStatus()} to determine if a solution is available.
+     */
+    @Override
+    public boolean isFeasible() {
+        switch (getStatus()) {
+        case FEASIBLE:
+        case OPTIMAL:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    /**
      * This implementation check each variable type to determine their types.
      */
     @Override
@@ -283,8 +297,7 @@ public abstract class AbstractLinearProblem implements LinearProblem {
         Status status = getStatus();
         boolean solutionAvailable = status.equals(Status.OPTIMAL) || status.equals(Status.FEASIBLE);
         if (solutionAvailable) {
-            buf.append(getObjectiveName());
-            buf.append("="); //$NON-NLS-1$
+            buf.append("ObjValue=");
             buf.append(getObjectiveValue());
             buf.append("\r\n"); //$NON-NLS-1$
         }
@@ -298,7 +311,7 @@ public abstract class AbstractLinearProblem implements LinearProblem {
             for (Constraint constraint : getConstraints()) {
                 buf.append("Constraint["); //$NON-NLS-1$
                 buf.append(constraint.getName());
-                buf.append("\r\n"); //$NON-NLS-1$
+                buf.append("]\r\n"); //$NON-NLS-1$
             }
         } else {
             for (Variable var : getVariables()) {

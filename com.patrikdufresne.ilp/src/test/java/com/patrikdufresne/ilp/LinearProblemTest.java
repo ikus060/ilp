@@ -173,6 +173,7 @@ public abstract class LinearProblemTest {
 
         assertTrue(solver.solve(lp, solver.createSolverOption()));
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertEquals(0, x.getValue().intValue());
         assertEquals(5, y.getValue().intValue());
 
@@ -182,12 +183,14 @@ public abstract class LinearProblemTest {
 
         // Check if the state is unchanged.
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
 
         // Dispose a variable
         y.dispose();
 
         // Check if the state is unchanged.
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
     }
 
 }
