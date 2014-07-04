@@ -262,6 +262,20 @@ public abstract class AbstractLinearProblem implements LinearProblem {
     }
 
     /**
+     * This implementation used the value return by {@link #getStatus()} to determine if a solution is available.
+     */
+    @Override
+    public boolean isFeasible() {
+        switch (getStatus()) {
+        case FEASIBLE:
+        case OPTIMAL:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    /**
      * This implementation check each variable type to determine their types.
      */
     @Override

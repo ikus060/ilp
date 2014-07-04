@@ -142,6 +142,7 @@ public abstract class SolverTest {
             assertTrue(solver.solve(lp, option));
 
             assertEquals(Status.OPTIMAL, lp.getStatus());
+            assertTrue(lp.isFeasible());
 
             assertEquals(2, y.getValue().intValue());
 
@@ -189,6 +190,7 @@ public abstract class SolverTest {
 
         // Check results
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertEquals(0, x.getValue().intValue());
         assertEquals(5, y.getValue().intValue());
         assertEquals(60.0, lp.getObjectiveValue().doubleValue(), 0.0001);
@@ -230,6 +232,7 @@ public abstract class SolverTest {
 
         // Check results
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertEquals(0, x.getValue().intValue());
         assertEquals(5, y.getValue().intValue());
         assertEquals(60.0, lp.getObjectiveValue().doubleValue(), 0.0001);
@@ -292,6 +295,7 @@ public abstract class SolverTest {
 
         // Check the results.
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertTrue(Math.abs(x.getValue() - 2) < 0.0001 || Math.abs(x.getValue() - 3) < 0.0001);
         assertEquals(2.0, y.getValue().doubleValue(), 0.0001);
         assertEquals(2.0, lp.getObjectiveValue().doubleValue(), 0.0001);
@@ -308,6 +312,7 @@ public abstract class SolverTest {
 
         // Check the result.
         assertEquals(Status.OPTIMAL, lp.getStatus());
+        assertTrue(lp.isFeasible());
         assertTrue(Math.abs(x.getValue() - 1) < 0.0001 || Math.abs(x.getValue() - 2) < 0.0001);
         assertEquals(3.0, y.getValue().doubleValue(), 0.0001);
         assertEquals(3.0, lp.getObjectiveValue().doubleValue(), 0.0001);
@@ -325,6 +330,7 @@ public abstract class SolverTest {
         assertFalse(solver.solve(lp, solver.createSolverOption()));
 
         assertTrue(lp.getStatus() == Status.INFEASIBLE || lp.getStatus() == Status.UNKNOWN);
+        assertFalse(lp.isFeasible());
 
     }
 }
