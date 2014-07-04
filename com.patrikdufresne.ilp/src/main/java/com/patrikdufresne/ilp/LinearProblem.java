@@ -332,13 +332,6 @@ public interface LinearProblem {
     Linear getObjectiveLinear();
 
     /**
-     * Return the objective name.
-     * 
-     * @return
-     */
-    String getObjectiveName();
-
-    /**
      * Returns the objective value. Only valid after solving the problem.
      * 
      * @return the objective value.

@@ -283,8 +283,7 @@ public abstract class AbstractLinearProblem implements LinearProblem {
         Status status = getStatus();
         boolean solutionAvailable = status.equals(Status.OPTIMAL) || status.equals(Status.FEASIBLE);
         if (solutionAvailable) {
-            buf.append(getObjectiveName());
-            buf.append("="); //$NON-NLS-1$
+            buf.append("ObjValue=");
             buf.append(getObjectiveValue());
             buf.append("\r\n"); //$NON-NLS-1$
         }
@@ -298,7 +297,7 @@ public abstract class AbstractLinearProblem implements LinearProblem {
             for (Constraint constraint : getConstraints()) {
                 buf.append("Constraint["); //$NON-NLS-1$
                 buf.append(constraint.getName());
-                buf.append("\r\n"); //$NON-NLS-1$
+                buf.append("]\r\n"); //$NON-NLS-1$
             }
         } else {
             for (Variable var : getVariables()) {

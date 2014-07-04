@@ -341,10 +341,8 @@ public class GLPKLinearProblem extends AbstractLinearProblem implements IPersist
         return linear;
     }
 
-    @Override
     public String getObjectiveName() {
         checkProblem();
-
         return GLPK.glp_get_obj_name(this.lp);
     }
 

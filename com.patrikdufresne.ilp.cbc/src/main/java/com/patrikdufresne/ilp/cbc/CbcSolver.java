@@ -168,7 +168,7 @@ public class CbcSolver implements Solver {
         // Release the previous solution.
         cbclp.bestSolution = null;
         cbclp.objValue = null;
-        
+
         // Flush java output.
         System.out.flush();
 

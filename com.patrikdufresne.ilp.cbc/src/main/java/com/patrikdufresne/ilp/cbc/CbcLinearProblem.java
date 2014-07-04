@@ -320,12 +320,6 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
         return linear;
     }
 
-    @Override
-    public String getObjectiveName() {
-        checkProblem();
-        return this.objName;
-    }
-
     /**
      * This implementation return the objective value.
      */
@@ -483,15 +477,6 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
             coefs = new double[0];
         }
         cbc4j.setObjCoefficients(this.lp, columns.length, columns, coefs);
-    }
-
-    /**
-     * Sets the objective name
-     */
-    public void setObjectiveName(String name) {
-        checkProblem();
-        // coin doesn't provide any mean to sets an objective name.
-        this.objName = name;
     }
 
 }
