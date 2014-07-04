@@ -25,8 +25,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.patrikdufresne.ilp.util.LinearProblems;
-
 /**
  * 
  * @author Patrik Dufresne
@@ -284,7 +282,7 @@ public abstract class SolverTest {
         lp.setObjectiveDirection(LinearProblem.MINIMIZE);
         lp.addConstraint("x+y>=4", new int[] { 1, 1 }, new Variable[] { x, y }, 4, null);
         lp.addConstraint("-x + y >= -1", new int[] { -1, 1 }, new Variable[] { x, y }, -1, null);
-        System.out.println(LinearProblems.toString(lp));
+        System.out.println(lp.toString());
         if (lp instanceof IPersistentLinearProblem) {
             ((IPersistentLinearProblem) lp).save(new File("coucou.1"));
         }
@@ -300,7 +298,7 @@ public abstract class SolverTest {
 
         // Update the problem by adding constrain
         lp.addConstraint("-x + 2y >= 4", new int[] { -1, 2 }, new Variable[] { x, y }, 4, null);
-        System.out.println(LinearProblems.toString(lp));
+        System.out.println(lp.toString());
         if (lp instanceof IPersistentLinearProblem) {
             ((IPersistentLinearProblem) lp).save(new File("coucou2"));
         }
