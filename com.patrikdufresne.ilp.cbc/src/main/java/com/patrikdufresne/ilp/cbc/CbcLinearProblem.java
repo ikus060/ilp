@@ -17,6 +17,8 @@ package com.patrikdufresne.ilp.cbc;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +39,24 @@ import com.patrikdufresne.ilp.VarType;
 import com.patrikdufresne.ilp.Variable;
 
 public class CbcLinearProblem extends AbstractLinearProblem implements IPersistentLinearProblem {
+
+    /**
+     * The scale for the returned value.
+     */
+    private static final int SCALE = 9;
+
+    /**
+     * Rounds the value,
+     * Implemented to solve the problems where the value was not returning an rounded number for close values value
+     * ex: 0.9999999999988346 instead of 1.0
+     * 
+     * @param value
+     *      The double to be rounded
+     * @return The rounded value
+     */
+    public static Double round(Double value) {
+        return new BigDecimal(value).setScale(SCALE, RoundingMode.HALF_EVEN).doubleValue();
+    }
 
     /**
      * Used to keep the best solution previously computed by the solver.
@@ -327,7 +347,8 @@ public class CbcLinearProblem extends AbstractLinearProblem implements IPersiste
     public Double getObjectiveValue() {
         checkProblem();
         checkSolution();
-        return this.objValue;
+        if (this.objValue == null) return null;
+        return round(this.objValue);
     }
 
     /**
